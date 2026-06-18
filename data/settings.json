@@ -1,0 +1,87 @@
+{
+  "blog": {
+    "eyebrow": "Planning Intelligence · Factory Brain",
+    "title": "The Ops Leader's Playbook",
+    "subtitle": "Scheduling strategies, capacity insights, and real implementation stories from the factory floor — no filler, no theory for theory's sake."
+  },
+  "newsletter": {
+    "title": "Planning Intelligence Weekly",
+    "body": "One insight for ops leaders every Thursday. No fluff. Unsubscribe any time."
+  },
+  "ctaBanner": {
+    "headline": "See Factory Brain on your own data.",
+    "body": "Most implementations go live in 7–14 days. No IT infrastructure required. No integration project.",
+    "primaryLabel": "Request a Demo →",
+    "primaryUrl": "https://patternlab.ai/#contact",
+    "secondaryLabel": "Get Free Capital Report",
+    "secondaryUrl": "https://patternlab.ai/capital-report.html"
+  },
+  "articleBottomCta": {
+    "headline": "Ready to fix your planning problem?",
+    "body": "Factory Brain goes live in 7–14 days. No IT infrastructure. No integration project. Just a schedule that reflects reality.",
+    "primaryLabel": "Request a Demo →",
+    "primaryUrl": "https://patternlab.ai/#contact",
+    "secondaryLabel": "Get Free Capital Report",
+    "secondaryUrl": "https://patternlab.ai/capital-report.html"
+  },
+  "articleSidebarCta": {
+    "headline": "See this on your data.",
+    "body": "Most implementations go live in 7–14 days. No IT infrastructure required.",
+    "btnLabel": "Request a Demo →",
+    "btnUrl": "https://patternlab.ai/#contact"
+  },
+  "topics": [
+    { "name": "Production Planning",   "slug": "planning"    },
+    { "name": "Scheduling Strategies", "slug": "scheduling"  },
+    { "name": "Case Studies",          "slug": "case-study"  },
+    { "name": "Capacity Management",   "slug": "capacity"    },
+    { "name": "ERP vs. AI Planning",   "slug": "strategy"    },
+    { "name": "Product Updates",       "slug": "product"     },
+    { "name": "Shop Floor IoT",        "slug": "iot"         }
+  ],
+  "filterTabs": [
+    { "label": "All Posts",       "value": "all"        },
+    { "label": "Planning",        "value": "planning"   },
+    { "label": "Scheduling",      "value": "scheduling" },
+    { "label": "Case Studies",    "value": "case-study" },
+    { "label": "Product Updates", "value": "product"    },
+    { "label": "Ops Strategy",    "value": "strategy"   }
+  ],
+  "footer": {
+    "tagline": "Planning intelligence for discrete and process manufacturers. Factory Brain turns demand into a confirmed, executable schedule.",
+    "columns": [
+      {
+        "heading": "Product",
+        "links": [
+          { "label": "Factory Brain",   "url": "#" },
+          { "label": "PatternClip",     "url": "#" },
+          { "label": "The Loop",        "url": "#" },
+          { "label": "Knowledge Graph", "url": "#" },
+          { "label": "Pricing",         "url": "#" }
+        ]
+      },
+      {
+        "heading": "Resources",
+        "links": [
+          { "label": "Blog",             "url": "#" },
+          { "label": "Case Studies",     "url": "#" },
+          { "label": "Free Diagnostic",  "url": "https://patternlab.ai/capital-report.html" },
+          { "label": "Product Tour",     "url": "#" },
+          { "label": "Documentation",    "url": "#" }
+        ]
+      },
+      {
+        "heading": "Company",
+        "links": [
+          { "label": "About",          "url": "#" },
+          { "label": "LinkedIn",       "url": "#" },
+          { "label": "Contact",        "url": "#" },
+          { "label": "Privacy Policy", "url": "#" },
+          { "label": "Security",       "url": "#" }
+        ]
+      }
+    ],
+    "copyright": "© 2026 PatternLab Technologies. All rights reserved.",
+    "email": "hello@patternlab.ai"
+  }
+}

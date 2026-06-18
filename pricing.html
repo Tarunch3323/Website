@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — PatternLab</title>
+  <link rel="stylesheet" href="fb-styles.css" />
+  <style>
+    @media (max-width: 720px) { .fb-navlinks { display: none !important; } .fb-footer-grid { grid-template-columns: 1fr 1fr !important; } }
+    @media (max-width: 560px) { .fb-hide-sm { display: none !important; } .fb-footer-grid { grid-template-columns: 1fr !important; } }
+    #fb-loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg-page); z-index: 9; }
+    .fb-spin { width: 30px; height: 30px; border-radius: 50%; border: 2.5px solid var(--border); border-top-color: var(--accent); animation: fbspin .7s linear infinite; }
+    @keyframes fbspin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <div id="fb-loading"><div class="fb-spin"></div></div>
+
+  <script src="/lib/react.js"></script>
+  <script src="/lib/react-dom.js"></script>
+  <script src="/lib/babel.js"></script>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="fb-mockups.jsx"></script>
+  <script type="text/babel" src="fb-sections.jsx"></script>
+  <script type="text/babel" src="fb-sections2.jsx"></script>
+  <script type="text/babel">
+  (() => {
+    const { Nav, useReveal } = window.FB_SECTIONS_1;
+    const { Pricing, Footer } = window.FB_SECTIONS_2;
+
+    function PricingPage() {
+      useReveal();
+      React.useEffect(() => {
+        const l = document.getElementById('fb-loading');
+        if (l) { l.style.transition = 'opacity .3s'; l.style.opacity = '0'; setTimeout(() => l.remove(), 320); }
+      }, []);
+      return (
+        <React.Fragment>
+          <Nav onTry={() => {}} />
+          <main style={{ paddingTop: 32 }}>
+            <Pricing />
+          </main>
+          <Footer />
+        </React.Fragment>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<PricingPage />);
+  })();
+  </script>
+</body>
+</html>

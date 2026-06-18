@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog · PatternLab</title>
+  <link rel="icon" type="image/png" href="https://patternlab.ai/assets/logo-icon-white.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-page:#F7FAF0;--color-bg-subtle:#EFF3E8;--color-bg-muted:#F0F0F0;
+      --color-bg-elevated:#ffffff;--color-border:#E0E0E0;--color-border-strong:#D0D0D0;
+      --color-text-primary:#1a1a1a;--color-text-secondary:#555555;--color-text-muted:#888888;
+      --color-text-faint:#aaaaaa;--color-brand:#5189f3;--color-brand-hover:#3a6fd8;
+      --color-brand-subtle:#eef3fe;--color-success:#22c55e;--color-warning:#f59e0b;
+      --color-danger:#f43f5e;--color-navy:#1e3a8a;--color-dark:#111827;
+      --radius-sm:4px;--radius-md:8px;--radius-lg:12px;--radius-xl:16px;--radius-full:9999px;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+      --shadow-lg:0 12px 32px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--color-bg-page);color:var(--color-text-primary);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+
+    /* PAGE ROUTER */
+    .page{display:none}
+    .page.active{display:block;animation:fadeIn 200ms ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:200;background:var(--color-dark);border-bottom:1px solid rgba(255,255,255,.08);padding:0 40px}
+    .nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .nav-wordmark{font-size:15px;font-weight:700;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+    .nav-links{display:flex;align-items:center;gap:28px}
+    .nav-links a{color:rgba(255,255,255,.65);font-size:14px;font-weight:500;transition:color 150ms;cursor:pointer}
+    .nav-links a:hover,.nav-links a.active{color:#fff}
+    .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-weight:600;border:none;cursor:pointer;transition:background 150ms;text-decoration:none}
+    .btn-sm{padding:8px 16px;font-size:13px;border-radius:var(--radius-md)}
+    .btn-md{padding:10px 20px;font-size:14px;border-radius:var(--radius-md)}
+    .btn-lg{padding:13px 28px;font-size:15px;border-radius:var(--radius-md)}
+    .btn-primary{background:var(--color-brand);color:#fff}
+    .btn-primary:hover{background:var(--color-brand-hover)}
+    .btn-outline{background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);border-radius:var(--radius-md)}
+    .btn-outline:hover{background:rgba(255,255,255,.08)}
+    .btn-outline-light{background:transparent;border:1px solid var(--color-border);color:var(--color-text-secondary);border-radius:var(--radius-md)}
+    .btn-outline-light:hover{background:var(--color-bg-subtle)}
+
+    /* ── BLOG INDEX ── */
+    .blog-hero{background:var(--color-dark);padding:72px 40px 80px;position:relative;overflow:hidden}
+    .blog-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 50%,rgba(81,137,243,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 80% 20%,rgba(81,137,243,.06) 0%,transparent 70%);pointer-events:none}
+    .blog-hero-inner{max-width:1280px;margin:0 auto;position:relative}
+    .blog-hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(81,137,243,.15);border:1px solid rgba(81,137,243,.3);color:var(--color-brand);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:var(--radius-full);margin-bottom:20px}
+    .blog-hero h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-.025em;margin-bottom:16px;max-width:600px}
+    .blog-hero p{font-size:17px;color:rgba(255,255,255,.6);max-width:520px;line-height:1.6}
+    .filter-bar{background:var(--color-bg-elevated);border-bottom:1px solid var(--color-border);padding:0 40px;position:sticky;top:64px;z-index:90}
+    .filter-bar-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;height:56px}
+    .filter-tabs{display:flex;align-items:center;gap:4px}
+    .filter-tab{font-size:13px;font-weight:500;color:var(--color-text-muted);padding:6px 14px;border-radius:var(--radius-full);cursor:pointer;border:none;background:none;font-family:inherit;transition:all 150ms}
+    .filter-tab:hover{color:var(--color-text-primary);background:var(--color-bg-subtle)}
+    .filter-tab.active{background:var(--color-dark);color:#fff;font-weight:600}
+    .search-box{display:flex;align-items:center;gap:8px;background:var(--color-bg-subtle);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:7px 14px;font-size:13px;color:var(--color-text-muted);min-width:200px}
+    .blog-main{padding:56px 40px 80px}
+    .blog-main-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+    .post-tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-full);margin-bottom:16px}
+    .tag-planning{background:#dde8fd;color:#2d58b8}.tag-case-study{background:#dcfce7;color:#15803d}
+    .tag-strategy{background:#fef3c7;color:#b45309}.tag-product{background:#f3f0ff;color:#6d28d9}
+    .tag-ops{background:#fce7f3;color:#9d174d}
+    .featured-label{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+    .featured-label span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)}
+    .featured-label::after{content:'';flex:1;height:1px;background:var(--color-border)}
+    .featured-card{background:var(--color-bg-elevated);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:48px;display:grid;grid-template-columns:1fr 1fr;cursor:pointer;transition:box-shadow 200ms,transform 200ms}
+    .featured-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+    .featured-card-visual{background:var(--color-dark);position:relative;min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;padding:32px;overflow:hidden}
+    .featured-card-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(81,137,243,.2) 0%,transparent 70%),linear-gradient(135deg,#0f1c3f 0%,#111827 100%)}
+    .visual-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(81,137,243,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(81,137,243,.06) 1px,transparent 1px);background-size:32px 32px}
+    .visual-metric{position:relative;display:flex;flex-direction:column;gap:16px}
+    .metric-row{display:flex;gap:12px}
+    .metric-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-lg);padding:12px 16px}
+    .metric-chip .val{font-size:22px;font-weight:800;color:#fff;line-height:1}
+    .metric-chip .val.green{color:var(--color-success)}.metric-chip .val.blue{color:var(--color-brand)}
+    .metric-chip .lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px}
+    .featured-card-content{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+    .featured-card-content h2{font-size:26px;font-weight:700;color:var(--color-text-primary);line-height:1.25;letter-spacing:-.02em;margin-bottom:14px}
+    .featured-card-content p{font-size:15px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:28px}
+    .post-meta{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+    .author-avatar{width:34px;height:34px;border-radius:var(--radius-full);background:var(--color-brand);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    .post-meta-text{font-size:13px}
+    .post-meta-text .author{font-weight:600;color:var(--color-text-primary)}
+    .post-meta-text .date{color:var(--color-text-muted)}
+    .read-time{margin-left:auto;font-size:12px;color:var(--color-text-muted);display:flex;align-items:center;gap:4px}
+    .read-more-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--color-brand);transition:gap 150ms;background:none;border:none;cursor:pointer;font-family:inherit;padding:0;pointer-events:all}
+    .read-more-link:hover{gap:10px;color:var(--color-brand-hover)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .section-head h3{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)}
+    .section-head a{font-size:13px;font-weight:600;color:var(--color-brand)}
+    .post-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:48px}
+    .post-card{background:var(--color-bg-elevated);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow 200ms,transform 200ms;cursor:pointer;display:flex;flex-direction:column}
+    .post-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+    .post-card-thumb{height:160px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
+    .thumb-dark{background:linear-gradient(135deg,#111827 0%,#1e3a8a 100%)}
+    .thumb-slate{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%)}
+    .thumb-blue{background:linear-gradient(135deg,#1e3a8a 0%,#2d58b8 100%)}
+    .thumb-teal{background:linear-gradient(135deg,#134e4a 0%,#0d9488 100%)}
+    .thumb-pattern{position:absolute;inset:0;background-image:linear-gradient(rgba(81,137,243,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(81,137,243,.08) 1px,transparent 1px);background-size:24px 24px}
+    .thumb-label{position:relative;font-size:28px;font-weight:900;color:rgba(255,255,255,.12);letter-spacing:-.03em;line-height:1;user-select:none}
+    .post-card-body{padding:20px;flex:1;display:flex;flex-direction:column}
+    .post-card-body h4{font-size:16px;font-weight:700;color:var(--color-text-primary);line-height:1.35;margin-bottom:10px}
+    .post-card-body p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.6;flex:1}
+    .post-card-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--color-border)}
+    .post-card-footer .date{font-size:12px;color:var(--color-text-muted)}
+    .post-card-footer .read{font-size:12px;color:var(--color-brand);font-weight:600}
+    .post-list{display:flex;flex-direction:column;gap:1px;background:var(--color-border);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+    .post-list-item{background:var(--color-bg-elevated);padding:20px 24px;display:flex;gap:20px;align-items:flex-start;transition:background 150ms;cursor:pointer}
+    .post-list-item:hover{background:var(--color-bg-subtle)}
+    .post-list-num{font-size:28px;font-weight:900;color:var(--color-border);line-height:1;min-width:36px}
+    .post-list-body{flex:1}
+    .post-list-body h4{font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:6px;line-height:1.35}
+    .post-list-body p{font-size:13px;color:var(--color-text-secondary);line-height:1.55}
+    .post-list-meta{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+    .post-list-meta .date{font-size:12px;color:var(--color-text-muted)}
+    .blog-sidebar{position:sticky;top:136px;display:flex;flex-direction:column;gap:24px}
+    .sidebar-card{background:var(--color-bg-elevated);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+    .sidebar-card-head{padding:16px 20px;border-bottom:1px solid var(--color-border)}
+    .sidebar-card-head h4{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)}
+    .sidebar-card-body{padding:16px 20px}
+    .newsletter-card{background:var(--color-dark);border-radius:var(--radius-lg);padding:24px;overflow:hidden;position:relative}
+    .newsletter-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 80%,rgba(81,137,243,.2) 0%,transparent 70%);pointer-events:none}
+    .newsletter-card h4{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;position:relative}
+    .newsletter-card p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:20px;position:relative}
+    .newsletter-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius-md);color:#fff;font-size:13px;font-family:inherit;padding:9px 14px;width:100%;margin-bottom:10px;position:relative;outline:none}
+    .newsletter-input::placeholder{color:rgba(255,255,255,.35)}
+    .newsletter-input:focus{border-color:var(--color-brand)}
+    .newsletter-btn{width:100%;background:var(--color-brand);color:#fff;border:none;border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;position:relative;transition:background 150ms}
+    .newsletter-btn:hover{background:var(--color-brand-hover)}
+    .topic-list{display:flex;flex-direction:column;gap:2px}
+    .topic-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background 150ms}
+    .topic-item:hover{background:var(--color-bg-subtle)}
+    .topic-item span{font-size:13.5px;font-weight:500;color:var(--color-text-secondary)}
+    .topic-count{font-size:11px;font-weight:600;color:var(--color-text-muted);background:var(--color-bg-subtle);border-radius:var(--radius-full);padding:2px 8px}
+    .popular-list{display:flex;flex-direction:column;gap:16px}
+    .popular-item{display:flex;gap:14px;cursor:pointer}
+    .popular-item:hover .popular-title{color:var(--color-brand)}
+    .popular-num{font-size:22px;font-weight:900;color:var(--color-border);line-height:1;flex-shrink:0}
+    .popular-title{font-size:13.5px;font-weight:600;color:var(--color-text-primary);line-height:1.35;margin-bottom:4px;transition:color 150ms}
+    .popular-date{font-size:12px;color:var(--color-text-muted)}
+    .cta-banner{background:var(--color-navy);border-radius:var(--radius-xl);padding:48px 40px;text-align:center;position:relative;overflow:hidden;margin-top:56px}
+    .cta-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(81,137,243,.3) 0%,transparent 70%);pointer-events:none}
+    .cta-banner h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-.02em}
+    .cta-banner p{font-size:15px;color:rgba(255,255,255,.6);max-width:460px;margin:0 auto 28px;line-height:1.6;position:relative}
+    .cta-actions{display:flex;align-items:center;justify-content:center;gap:12px;position:relative}
+    .blog-footer{background:var(--color-dark);border-top:1px solid rgba(255,255,255,.08);padding:48px 40px 32px}
+    .blog-footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-brand p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;margin-top:12px;max-width:260px}
+    .footer-col h5{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+    .footer-col ul li a{font-size:13.5px;color:rgba(255,255,255,.55);transition:color 150ms}
+    .footer-col ul li a:hover{color:#fff}
+    .footer-bottom{max-width:1280px;margin:0 auto;border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between}
+    .footer-bottom p{font-size:12px;color:rgba(255,255,255,.3)}
+    .footer-bottom a{color:rgba(255,255,255,.4);font-size:12px}
+    .footer-bottom a:hover{color:rgba(255,255,255,.7)}
+
+    /* ── ARTICLE ── */
+    .article-hero{background:var(--color-dark);padding:64px 40px 0;position:relative;overflow:hidden}
+    .article-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 15% 60%,rgba(81,137,243,.14) 0%,transparent 70%),radial-gradient(ellipse 35% 50% at 85% 20%,rgba(34,197,94,.06) 0%,transparent 70%);pointer-events:none}
+    .hero-inner{max-width:860px;margin:0 auto;position:relative}
+    .hero-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.45);margin-bottom:24px}
+    .hero-breadcrumb a{color:rgba(255,255,255,.45);transition:color 150ms;cursor:pointer}
+    .hero-breadcrumb a:hover{color:rgba(255,255,255,.8)}
+    .hero-breadcrumb .sep{color:rgba(255,255,255,.25)}
+    .hero-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#4ade80;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:var(--radius-full);margin-bottom:20px}
+    .article-hero h1{font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:800;color:#fff;line-height:1.18;letter-spacing:-.025em;margin-bottom:20px;max-width:780px}
+    .hero-deck{font-size:18px;color:rgba(255,255,255,.58);line-height:1.65;max-width:680px;margin-bottom:36px}
+    .hero-meta{display:flex;align-items:center;gap:20px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .hero-avatar{width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-brand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+    .meta-text .author{font-size:14px;font-weight:600;color:rgba(255,255,255,.85)}
+    .meta-text .date{font-size:13px;color:rgba(255,255,255,.4);margin-top:2px}
+    .meta-pill{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:var(--radius-full)}
+    .metrics-strip{background:var(--color-dark);border-bottom:1px solid rgba(255,255,255,.08);padding:0 40px}
+    .metrics-strip-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08)}
+    .metric-block{background:rgba(255,255,255,.03);padding:24px 28px;display:flex;flex-direction:column;gap:6px}
+    .before-after{display:flex;align-items:baseline;gap:8px}
+    .m-before{font-size:22px;font-weight:700;color:rgba(255,255,255,.3);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.15)}
+    .m-arrow{color:rgba(255,255,255,.2);font-size:14px}
+    .m-after{font-size:28px;font-weight:900;color:var(--color-success);letter-spacing:-.02em;line-height:1}
+    .m-after.blue{color:var(--color-brand)}
+    .m-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+    .article-layout{max-width:1160px;margin:0 auto;padding:56px 40px 80px;display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:start}
+    .article-section{background:var(--color-bg-elevated);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:36px 40px;margin-bottom:24px;box-shadow:var(--shadow-sm)}
+    .section-label{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .section-num{width:28px;height:28px;border-radius:var(--radius-full);background:var(--color-dark);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .section-title-small{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-muted)}
+    .brand-divider{width:64px;height:5px;background:var(--color-brand);border-radius:3px;margin-bottom:24px}
+    .prose h2{font-size:22px;font-weight:700;color:var(--color-text-primary);letter-spacing:-.02em;line-height:1.3;margin-bottom:14px}
+    .prose p{font-size:16px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:16px}
+    .prose p:last-child{margin-bottom:0}
+    .prose strong{color:var(--color-text-primary);font-weight:600}
+    .complexity-list{display:flex;flex-direction:column;gap:12px;margin:20px 0}
+    .complexity-item{display:flex;align-items:flex-start;gap:14px;background:var(--color-bg-subtle);border-radius:var(--radius-lg);padding:14px 18px}
+    .complexity-icon{width:32px;height:32px;border-radius:var(--radius-md);background:var(--color-dark);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+    .complexity-item p{font-size:14px;margin:0;line-height:1.5;color:var(--color-text-secondary)}
+    .complexity-item p strong{color:var(--color-text-primary)}
+    .pull-quote{background:var(--color-dark);border-radius:var(--radius-xl);padding:32px 36px;margin:24px 0;position:relative;overflow:hidden}
+    .pull-quote::before{content:'"';position:absolute;top:-10px;left:24px;font-size:120px;font-weight:900;color:rgba(81,137,243,.12);line-height:1;font-family:Georgia,serif}
+    .pull-quote p{font-size:18px;font-weight:600;color:#fff;line-height:1.55;position:relative;margin:0}
+    .pull-quote-source{margin-top:14px;font-size:13px;color:rgba(255,255,255,.4);position:relative}
+    .solution-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+    .solution-card{background:var(--color-bg-subtle);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:20px}
+    .solution-card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .solution-icon{width:34px;height:34px;border-radius:var(--radius-md);background:var(--color-brand-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .solution-card h4{font-size:14px;font-weight:700;color:var(--color-text-primary)}
+    .solution-card p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.6;margin:0}
+    .pillar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px}
+    .pillar{border-radius:var(--radius-lg);padding:20px 22px;border:1px solid var(--color-border)}
+    .pillar-1{background:linear-gradient(135deg,#f0f7ff 0%,#e8f3fe 100%);border-color:#c3d9fc}
+    .pillar-2{background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border-color:#a7f3c3}
+    .pillar-3{background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);border-color:#fcd34d}
+    .pillar-4{background:linear-gradient(135deg,#fdf2f8 0%,#fce7f3 100%);border-color:#f9a8d4}
+    .pillar-num{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:8px}
+    .pillar h4{font-size:15px;font-weight:700;color:var(--color-text-primary);margin-bottom:6px}
+    .pillar p{font-size:13px;color:var(--color-text-secondary);line-height:1.55;margin:0}
+    .results-block{background:var(--color-dark);border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden}
+    .results-block::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 100%,rgba(81,137,243,.2) 0%,transparent 70%);pointer-events:none}
+    .results-block .eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;position:relative}
+    .results-block h2{font-size:24px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:4px;position:relative}
+    .results-block .sub{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:32px;position:relative}
+    .results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.1);border-radius:var(--radius-lg);overflow:hidden;position:relative}
+    .result-cell{background:rgba(255,255,255,.04);padding:24px 20px;display:flex;flex-direction:column;gap:4px}
+    .r-before{font-size:13px;color:rgba(255,255,255,.3);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.2)}
+    .r-after{font-size:32px;font-weight:900;letter-spacing:-.03em;line-height:1}
+    .r-after.green{color:var(--color-success)}.r-after.blue{color:var(--color-brand)}
+    .r-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.4);font-weight:600;margin-top:4px}
+    .takeaway{background:var(--color-brand-subtle);border:1px solid #c3d9fc;border-left:4px solid var(--color-brand);border-radius:var(--radius-md);padding:20px 22px;margin-top:24px}
+    .takeaway p{font-size:15px;color:#1e3a8a;line-height:1.65;margin:0;font-weight:500}
+    .article-sidebar{position:sticky;top:84px;display:flex;flex-direction:column;gap:20px}
+    .sc-head{padding:14px 18px;border-bottom:1px solid var(--color-border)}
+    .sc-head h4{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted)}
+    .sc-body{padding:16px 18px}
+    .toc-list{list-style:none;display:flex;flex-direction:column;gap:2px}
+    .toc-list li a{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary);padding:7px 10px;border-radius:var(--radius-md);transition:all 150ms;cursor:pointer}
+    .toc-list li a:hover{background:var(--color-bg-subtle);color:var(--color-brand)}
+    .toc-list li a.toc-active{background:var(--color-brand-subtle);color:var(--color-brand);font-weight:600}
+    .toc-dot{width:6px;height:6px;border-radius:var(--radius-full);background:var(--color-border);flex-shrink:0;transition:background 150ms}
+    .toc-list li a:hover .toc-dot,.toc-list li a.toc-active .toc-dot{background:var(--color-brand)}
+    .snapshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .snapshot-cell{background:var(--color-bg-subtle);border-radius:var(--radius-md);padding:12px 14px}
+    .snapshot-cell .val{font-size:20px;font-weight:800;color:var(--color-text-primary);line-height:1}
+    .snapshot-cell .val.green{color:var(--color-success)}
+    .snapshot-cell .lbl{font-size:11px;color:var(--color-text-muted);margin-top:3px}
+    .cta-sidebar{background:var(--color-navy);border-radius:var(--radius-lg);padding:22px;position:relative;overflow:hidden}
+    .cta-sidebar::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 80%,rgba(81,137,243,.3) 0%,transparent 70%);pointer-events:none}
+    .cta-sidebar h4{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;position:relative}
+    .cta-sidebar p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:18px;position:relative}
+    .cta-sidebar-btn{display:block;width:100%;background:var(--color-brand);color:#fff;border:none;border-radius:var(--radius-md);padding:11px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center;transition:background 150ms;position:relative;text-decoration:none}
+    .cta-sidebar-btn:hover{background:var(--color-brand-hover)}
+    .related-list{display:flex;flex-direction:column;gap:14px}
+    .related-item{display:flex;gap:12px;cursor:pointer}
+    .related-thumb{width:52px;height:42px;border-radius:var(--radius-md);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .rt-dark{background:linear-gradient(135deg,#111827 0%,#1e3a8a 100%)}
+    .rt-teal{background:linear-gradient(135deg,#134e4a 0%,#0d9488 100%)}
+    .rt-blue{background:linear-gradient(135deg,#1e3a8a 0%,#2d58b8 100%)}
+    .rt-num{font-size:18px;font-weight:900;color:rgba(255,255,255,.2)}
+    .related-body h5{font-size:13px;font-weight:600;color:var(--color-text-primary);line-height:1.35;margin-bottom:3px;transition:color 150ms}
+    .related-item:hover .related-body h5{color:var(--color-brand)}
+    .related-body span{font-size:11px;color:var(--color-text-muted)}
+    .bottom-cta{background:var(--color-dark);padding:64px 40px}
+    .bottom-cta-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+    .bottom-cta h2{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:10px}
+    .bottom-cta p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.6}
+    .bottom-cta-actions{display:flex;flex-direction:column;gap:10px;min-width:200px}
+    .article-footer{background:#0f172a;border-top:1px solid rgba(255,255,255,.07);padding:32px 40px}
+    .article-footer-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+    .footer-logo-row{display:flex;align-items:center;gap:10px}
+    .footer-logo-row span{font-size:13px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.5);text-transform:uppercase}
+    .back-link{color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;transition:color 150ms}
+    .back-link:hover{color:rgba(255,255,255,.7)}
+
+    /* ── Mobile hamburger ── */
+    .nav-toggle{display:none;flex-direction:column;gap:5px;width:44px;height:44px;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;border-radius:8px}
+    .nav-toggle span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .22s,opacity .22s}
+    .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .nav-toggle.open span:nth-child(2){opacity:0}
+    .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .nav-mobile{display:none;position:fixed;top:64px;left:0;right:0;background:#111827;border-bottom:1px solid rgba(255,255,255,.1);z-index:190;flex-direction:column;padding:8px 0 16px}
+    .nav-mobile.open{display:flex}
+    .nav-mobile a{padding:13px 24px;font-size:15px;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none}
+    .nav-mobile a:hover{color:#fff;background:rgba(255,255,255,.06)}
+
+    @media(max-width:768px){
+      .navbar{padding:0 20px}
+      .nav-links{display:none}
+      .nav-toggle{display:flex}
+
+      .blog-hero{padding:48px 20px 56px}
+      .filter-bar{padding:0 20px}
+      .filter-bar-inner{flex-wrap:wrap;height:auto;padding:10px 0;gap:10px}
+      .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;flex-shrink:0;max-width:100%}
+      .filter-tabs::-webkit-scrollbar{display:none}
+      .search-box{width:100%;min-width:0}
+      .blog-main{padding:32px 20px 56px}
+      .blog-main-inner{grid-template-columns:1fr;gap:32px}
+      .blog-sidebar{position:static}
+      .featured-card{grid-template-columns:1fr}
+      .featured-card-visual{min-height:200px}
+      .featured-card-content{padding:24px 20px}
+      .featured-card-content h2{font-size:20px}
+      .post-grid{grid-template-columns:1fr}
+      .cta-banner{padding:32px 20px}
+      .cta-actions{flex-direction:column;align-items:stretch}
+      .cta-actions a{text-align:center}
+      .blog-footer{padding:32px 20px 24px}
+      .blog-footer-inner{grid-template-columns:1fr 1fr;gap:24px}
+      .article-hero{padding:48px 20px 0}
+      .metrics-strip{padding:0 20px}
+      .metrics-strip-inner{grid-template-columns:1fr;background:transparent;gap:1px}
+      .metric-block{background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.08)}
+      .article-layout{grid-template-columns:1fr;padding:32px 20px 56px;gap:0}
+      .article-sidebar{display:none}
+      .solution-grid{grid-template-columns:1fr}
+      .pillar-grid{grid-template-columns:1fr}
+      .results-grid{grid-template-columns:1fr;border-radius:var(--radius-lg)}
+      .bottom-cta{padding:48px 20px}
+      .bottom-cta-inner{grid-template-columns:1fr;gap:24px;text-align:center}
+      .bottom-cta-actions{flex-direction:row;flex-wrap:wrap;justify-content:center;min-width:0}
+      .article-footer{padding:20px}
+      .article-footer-inner{flex-direction:column;gap:10px}
+      .hero-meta{flex-wrap:wrap;gap:10px}
+      .hero-deck{font-size:16px}
+    }
+    @media(max-width:480px){
+      .blog-footer-inner{grid-template-columns:1fr}
+      .post-list-item{flex-direction:column;gap:6px}
+      .post-list-num{font-size:20px}
+      .post-list-meta{align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" style="text-decoration:none">
+      <img src="/assets/logo_white.svg" alt="PatternLab.ai" style="height:32px;width:auto" />
+    </a>
+    <div class="nav-links">
+      <a href="https://patternlab.ai/#problem">Problem</a>
+      <a href="https://patternlab.ai/#how-it-works">How It Works</a>
+      <a href="https://patternlab.ai/#platform">Platform</a>
+      <a onclick="goTo('blog')" class="active">Blog</a>
+      <a href="https://patternlab.ai/#contact" class="btn btn-sm btn-primary">Get Started</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav-mobile" id="nav-mobile">
+  <a href="https://patternlab.ai/#problem">Problem</a>
+  <a href="https://patternlab.ai/#how-it-works">How It Works</a>
+  <a href="https://patternlab.ai/#platform">Platform</a>
+  <a onclick="goTo('blog');document.getElementById('nav-mobile').classList.remove('open');document.getElementById('nav-toggle').classList.remove('open')">Blog</a>
+  <div style="padding:8px 16px 0"><a href="https://patternlab.ai/#contact" class="btn btn-primary" style="display:block;text-align:center">Get Started</a></div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: BLOG INDEX
+══════════════════════════════════════════════════ -->
+<div id="page-blog" class="page active">
+
+  <section class="blog-hero">
+    <div class="blog-hero-inner">
+      <div class="blog-hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Planning Intelligence · Factory Brain
+      </div>
+      <h1>The Ops Leader's Playbook</h1>
+      <p>Scheduling strategies, capacity insights, and real implementation stories from the factory floor — no filler, no theory for theory's sake.</p>
+    </div>
+  </section>
+
+  <div class="filter-bar">
+    <div class="filter-bar-inner">
+      <div class="filter-tabs">
+        <button class="filter-tab active">All Posts</button>
+        <button class="filter-tab">Planning</button>
+        <button class="filter-tab">Scheduling</button>
+        <button class="filter-tab">Case Studies</button>
+        <button class="filter-tab">Product Updates</button>
+        <button class="filter-tab">Ops Strategy</button>
+      </div>
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search articles…
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-main">
+    <div class="blog-main-inner">
+      <div>
+        <!-- FEATURED -->
+        <div class="featured-label"><span>Featured</span></div>
+        <article class="featured-card" id="featured-card">
+          <div class="featured-card-visual">
+            <div class="visual-grid"></div>
+            <div class="visual-metric">
+              <div class="metric-row">
+                <div class="metric-chip"><div class="val green">+11pp</div><div class="lbl">On-time delivery</div></div>
+                <div class="metric-chip"><div class="val blue">−60%</div><div class="lbl">Changeover time</div></div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-chip"><div class="val">5 hrs → 0</div><div class="lbl">Planning time</div></div>
+                <div class="metric-chip"><div class="val green">3 plants</div><div class="lbl">9 lines, 100+ SKUs</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="featured-card-content">
+            <span class="post-tag tag-case-study">Case Study</span>
+            <h2>How Avanti Frozen Foods Went from 63% to 74% On-Time Delivery</h2>
+            <p>One planner. Three plants. Nine lines. Over 100 SKUs. Here's how Factory Brain's scheduling engine turned five hours of daily planning into an instant — and what the results looked like after 90 days.</p>
+            <div class="post-meta">
+              <div class="author-avatar">PL</div>
+              <div class="post-meta-text">
+                <div class="author">PatternLab Team</div>
+                <div class="date">June 10, 2026</div>
+              </div>
+              <div class="read-time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                8 min read
+              </div>
+            </div>
+            <span class="read-more-link" id="read-more-btn">
+              Read the full story
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+        </article>
+
+        <!-- RECENT GRID -->
+        <div class="section-head"><h3>Recent Articles</h3><a href="#">View all →</a></div>
+        <div class="post-grid">
+          <article class="post-card"><div class="post-card-thumb thumb-dark"><div class="thumb-pattern"></div><div class="thumb-label">01</div></div><div class="post-card-body"><span class="post-tag tag-planning" style="margin-bottom:10px">Planning</span><h4>The Six Scheduling Strategies Every Plant Manager Should Know</h4><p>EDD, Min Changeover, Critical Ratio, Max Utilisation, SPT, Weighted Priority — when each works, when each fails, and how to switch between them mid-week.</p></div><div class="post-card-footer"><span class="date">June 3, 2026</span><span class="read">6 min read →</span></div></article>
+          <article class="post-card"><div class="post-card-thumb thumb-blue"><div class="thumb-pattern"></div><div class="thumb-label">02</div></div><div class="post-card-body"><span class="post-tag tag-strategy" style="margin-bottom:10px">Ops Strategy</span><h4>Why Your ERP's Schedule Is Already Wrong Before the Week Starts</h4><p>ERPs model capacity as theoretical maximums. Factory Brain uses a Knowledge Graph that reflects actual machine state, routing constraints, and live changeover data.</p></div><div class="post-card-footer"><span class="date">May 28, 2026</span><span class="read">5 min read →</span></div></article>
+          <article class="post-card"><div class="post-card-thumb thumb-slate"><div class="thumb-pattern"></div><div class="thumb-label">03</div></div><div class="post-card-body"><span class="post-tag tag-product" style="margin-bottom:10px">Product</span><h4>Versioned Releases: Why Every Schedule Should Be Immutable</h4><p>When planners overwrite last week's schedule to fix this week's problem, accountability disappears. Versioned releases lock the plan, log changes, and make drift visible.</p></div><div class="post-card-footer"><span class="date">May 20, 2026</span><span class="read">4 min read →</span></div></article>
+          <article class="post-card"><div class="post-card-thumb thumb-teal"><div class="thumb-pattern"></div><div class="thumb-label">04</div></div><div class="post-card-body"><span class="post-tag tag-ops" style="margin-bottom:10px">Case Study</span><h4>60 Sensors. One Day. How Godrej Jersey Wired Their Shop Floor</h4><p>PatternClip sensors deployed across a dairy manufacturing facility in a single working day — no IT infrastructure, no integration project, live machine data by morning.</p></div><div class="post-card-footer"><span class="date">May 14, 2026</span><span class="read">7 min read →</span></div></article>
+        </div>
+
+        <!-- MORE LIST -->
+        <div class="section-head"><h3>More from the Blog</h3></div>
+        <div class="post-list">
+          <div class="post-list-item"><div class="post-list-num">05</div><div class="post-list-body"><h4>Order Feasibility Before You Commit: Stop Promising What You Can't Deliver</h4><p>Before a sales order is accepted, Factory Brain runs a feasibility check against live machine capacity.</p></div><div class="post-list-meta"><span class="post-tag tag-planning">Planning</span><span class="date">May 8, 2026</span></div></div>
+          <div class="post-list-item"><div class="post-list-num">06</div><div class="post-list-body"><h4>What Is a Knowledge Graph and Why Does Your Factory Need One?</h4><p>Relational databases store rows. Knowledge graphs store relationships. For a factory — where a machine's idle time ripples across three downstream SKUs — the difference is everything.</p></div><div class="post-list-meta"><span class="post-tag tag-product">Product</span><span class="date">April 30, 2026</span></div></div>
+          <div class="post-list-item"><div class="post-list-num">07</div><div class="post-list-body"><h4>7–14 Day Go-Live: How Factory Brain Deploys Without an IT Project</h4><p>Most manufacturing software deployments take months and consume IT bandwidth. Factory Brain is live in two weeks.</p></div><div class="post-list-meta"><span class="post-tag tag-strategy">Ops Strategy</span><span class="date">April 22, 2026</span></div></div>
+          <div class="post-list-item"><div class="post-list-num">08</div><div class="post-list-body"><h4>Critical Ratio vs. EDD: Choosing the Right Strategy When Orders Compete</h4><p>Two late orders, one machine slot. EDD gives you the nearest due date. Critical Ratio tells you which order is in deeper trouble.</p></div><div class="post-list-meta"><span class="post-tag tag-planning">Planning</span><span class="date">April 15, 2026</span></div></div>
+        </div>
+
+        <div class="cta-banner">
+          <h2>See Factory Brain on your own data.</h2>
+          <p>Most implementations go live in 7–14 days. No IT infrastructure required. No integration project.</p>
+          <div class="cta-actions">
+            <a href="https://patternlab.ai/#contact" class="btn btn-md btn-primary">Request a Demo →</a>
+            <a href="https://patternlab.ai/capital-report.html" class="btn btn-md btn-outline">Get Free Capital Report</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="blog-sidebar">
+        <div class="newsletter-card">
+          <h4>Planning Intelligence Weekly</h4>
+          <p>One insight for ops leaders every Thursday. No fluff. Unsubscribe any time.</p>
+          <input class="newsletter-input" type="email" placeholder="your@email.com">
+          <button class="newsletter-btn">Subscribe →</button>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-card-head"><h4>Browse by Topic</h4></div>
+          <div class="sidebar-card-body">
+            <div class="topic-list">
+              <div class="topic-item"><span>Production Planning</span><span class="topic-count">12</span></div>
+              <div class="topic-item"><span>Scheduling Strategies</span><span class="topic-count">9</span></div>
+              <div class="topic-item"><span>Case Studies</span><span class="topic-count">6</span></div>
+              <div class="topic-item"><span>Capacity Management</span><span class="topic-count">8</span></div>
+              <div class="topic-item"><span>ERP vs. AI Planning</span><span class="topic-count">5</span></div>
+              <div class="topic-item"><span>Product Updates</span><span class="topic-count">7</span></div>
+              <div class="topic-item"><span>Shop Floor IoT</span><span class="topic-count">4</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-card-head"><h4>Most Read</h4></div>
+          <div class="sidebar-card-body">
+            <div class="popular-list">
+              <div class="popular-item"><div class="popular-num">01</div><div><div class="popular-title">The Six Scheduling Strategies Every Plant Manager Should Know</div><div class="popular-date">June 3, 2026</div></div></div>
+              <div class="popular-item" onclick="goTo('article')"><div class="popular-num">02</div><div><div class="popular-title">How Avanti Frozen Foods Went from 63% to 74% On-Time Delivery</div><div class="popular-date">June 10, 2026</div></div></div>
+              <div class="popular-item"><div class="popular-num">03</div><div><div class="popular-title">What Is a Knowledge Graph and Why Does Your Factory Need One?</div><div class="popular-date">April 30, 2026</div></div></div>
+              <div class="popular-item"><div class="popular-num">04</div><div><div class="popular-title">Why Your ERP's Schedule Is Already Wrong Before the Week Starts</div><div class="popular-date">May 28, 2026</div></div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="blog-footer">
+    <div class="blog-footer-inner">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:10px"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="#5189f3" stroke-width="1.5" fill="none"/><circle cx="20" cy="20" r="14" stroke="#5189f3" stroke-width="1.5" fill="none" opacity=".7"/><circle cx="20" cy="20" r="9" stroke="#5189f3" stroke-width="1.5" fill="none" opacity=".5"/><circle cx="20" cy="20" r="4" fill="#5189f3"/></svg><span style="font-size:13px;font-weight:700;letter-spacing:.08em;color:#fff;text-transform:uppercase">PATTERNLAB.AI</span></div>
+        <p>Planning intelligence for discrete and process manufacturers. Factory Brain turns demand into a confirmed, executable schedule.</p>
+      </div>
+      <div class="footer-col"><h5>Product</h5><ul><li><a href="#">Factory Brain</a></li><li><a href="#">PatternClip</a></li><li><a href="#">The Loop</a></li><li><a href="#">Knowledge Graph</a></li><li><a href="#">Pricing</a></li></ul></div>
+      <div class="footer-col"><h5>Resources</h5><ul><li><a href="#">Blog</a></li><li><a href="#">Case Studies</a></li><li><a href="#">Free Diagnostic</a></li><li><a href="#">Product Tour</a></li><li><a href="#">Documentation</a></li></ul></div>
+      <div class="footer-col"><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Security</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 PatternLab Technologies. All rights reserved.</p><a href="mailto:hello@patternlab.ai">hello@patternlab.ai</a></div>
+  </footer>
+</div><!-- /page-blog -->
+
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: ARTICLE
+══════════════════════════════════════════════════ -->
+<div id="page-article" class="page">
+
+  <header class="article-hero">
+    <div class="hero-inner">
+      <div class="hero-breadcrumb">
+        <a onclick="goTo('blog')">Blog</a><span class="sep">›</span>
+        <span>Case Studies</span><span class="sep">›</span>
+        <span style="color:rgba(255,255,255,.65)">Avanti Frozen Foods</span>
+      </div>
+      <div class="hero-tag">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Case Study
+      </div>
+      <h1>How Avanti Frozen Foods Went from 63% to 74% On-Time Delivery</h1>
+      <p class="hero-deck">3 plants. 9 lines. 100+ SKUs. One planner running it all on spreadsheets. Here's what happened when Factory Brain replaced every manual check in Avanti's planning workflow.</p>
+      <div class="hero-meta">
+        <div class="hero-avatar">PL</div>
+        <div class="meta-text"><div class="author">PatternLab Team</div><div class="date">June 10, 2026</div></div>
+        <div class="meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>8 min read</div>
+        <div class="meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Discrete Manufacturing</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="metrics-strip">
+    <div class="metrics-strip-inner">
+      <div class="metric-block"><div class="before-after"><span class="m-before">63%</span><span class="m-arrow">→</span><span class="m-after">74%</span></div><div class="m-label">On-Time Delivery</div></div>
+      <div class="metric-block"><div class="before-after"><span class="m-before">5h</span><span class="m-arrow">→</span><span class="m-after blue">Instant</span></div><div class="m-label">Weekly Planning Time</div></div>
+      <div class="metric-block"><div class="before-after"><span class="m-before">45 min</span><span class="m-arrow">→</span><span class="m-after">18 min</span></div><div class="m-label">Avg. Changeover Time</div></div>
+    </div>
+  </div>
+
+  <div class="article-layout">
+    <article>
+      <div class="article-section" id="s-challenge">
+        <div class="section-label"><div class="section-num">01</div><span class="section-title-small">The Challenge</span></div>
+        <div class="brand-divider"></div>
+        <div class="prose">
+          <h2>One planner. Three plants. Hundreds of interdependencies.</h2>
+          <p>Avanti Frozen Foods operates at scale — <strong>3 plants, 9 production lines, over 100 SKUs</strong>, multiple vendors, and approximately <strong>2,500 tonnes of processing per month</strong>. The operation demanded constant coordination across species, packaging formats, changeover sequences, and vendor delivery windows.</p>
+          <p>And it was all being held together by one planner and a spreadsheet.</p>
+        </div>
+        <div class="complexity-list">
+          <div class="complexity-item"><div class="complexity-icon">🏭</div><p><strong>3 plants, 9 lines</strong> — each with unique machine constraints, line speeds, and SKU compatibility requirements.</p></div>
+          <div class="complexity-item"><div class="complexity-icon">📦</div><p><strong>100+ SKUs</strong> across multiple species and packaging formats, each with different changeover requirements and vendor lead times.</p></div>
+          <div class="complexity-item"><div class="complexity-icon">⚠️</div><p><strong>1 in 4 orders at risk</strong> of missing their delivery window. Capacity underutilised, materials misaligned, no visibility into the real bottleneck.</p></div>
+        </div>
+        <div class="pull-quote">
+          <p>The planner isn't late because they're slow. They're late because the spreadsheet gives them no way to be on time.</p>
+          <div class="pull-quote-source">— PatternLab implementation assessment, Avanti Frozen Foods</div>
+        </div>
+      </div>
+
+      <div class="article-section" id="s-complexity">
+        <div class="section-label"><div class="section-num">02</div><span class="section-title-small">The Complexity</span></div>
+        <div class="brand-divider"></div>
+        <div class="prose">
+          <h2>It's not a people problem. It's a planning problem.</h2>
+          <p>When an operation is this interconnected, the <strong>relationships between decisions matter as much as the decisions themselves</strong>. Three questions that no spreadsheet can answer in real time:</p>
+        </div>
+        <div class="complexity-list" style="margin-top:16px">
+          <div class="complexity-item"><div class="complexity-icon" style="background:#1e3a8a">?</div><p>Which plant can run which SKU — given line compatibility, material availability, and current capacity load?</p></div>
+          <div class="complexity-item"><div class="complexity-icon" style="background:#1e3a8a">?</div><p>Which line clears which changeover — and in what sequence to minimise downtime across the week?</p></div>
+          <div class="complexity-item"><div class="complexity-icon" style="background:#1e3a8a">?</div><p>Which vendor sends which material — and does the delivery window align with the scheduled run?</p></div>
+        </div>
+        <div class="prose" style="margin-top:20px"><p>Answering each question manually takes time. Answering all three simultaneously, across three plants, is structurally impossible without a connected system.</p></div>
+      </div>
+
+      <div class="article-section" id="s-solution">
+        <div class="section-label"><div class="section-num">03</div><span class="section-title-small">The Resolution</span></div>
+        <div class="brand-divider"></div>
+        <div class="prose">
+          <h2>Factory Brain: a connected scheduler built for complex operations.</h2>
+          <p>PatternLab replaced Avanti's fragmented planning process with a single connected system — <strong>every constraint encoded, every decision traceable</strong>.</p>
+        </div>
+        <div class="solution-grid">
+          <div class="solution-card"><div class="solution-card-head"><div class="solution-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5189f3" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h4>Live Capacity Planning</h4></div><p>Real capacity visibility per plant, per line, per week — pulled directly from the scheduling engine. Overloads flagged before commit.</p></div>
+          <div class="solution-card"><div class="solution-card-head"><div class="solution-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5189f3" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><h4>Automated Feasibility Checks</h4></div><p>Every incoming order validated against live machine capacity and raw material availability in seconds. No surprises at execution.</p></div>
+          <div class="solution-card"><div class="solution-card-head"><div class="solution-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5189f3" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg></div><h4>Changeover-Aware Scheduling</h4></div><p>An interactive Gantt that respects constraints — changeover times, line compatibility, and batch sequencing — accessible to the whole team.</p></div>
+          <div class="solution-card"><div class="solution-card-head"><div class="solution-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5189f3" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><h4>Full Traceability</h4></div><p>Every schedule version, plan change, and strategy choice logged automatically. Full visibility into what was planned, when, and by whom.</p></div>
+        </div>
+      </div>
+
+      <div class="article-section" id="s-installed">
+        <div class="section-label"><div class="section-num">04</div><span class="section-title-small">What Was Installed</span></div>
+        <div class="brand-divider"></div>
+        <div class="prose">
+          <h2>One system replaced every spreadsheet, manual check, and undocumented rule.</h2>
+          <p>The implementation covered the full planning workflow — from order intake to schedule release — across all three Avanti plants. No workarounds. No parallel processes.</p>
+          <p>Factory Brain gave the planning team live capacity visibility per plant, per line, per week pulled directly from the scheduling engine. Overloads were flagged before commit, not after the week fell apart. A structured planning cycle that didn't depend on one person's memory replaced the informal, tribal knowledge that had previously held the operation together.</p>
+        </div>
+      </div>
+
+      <div class="article-section" id="s-pillars">
+        <div class="section-label"><div class="section-num">05</div><span class="section-title-small">Adaptation</span></div>
+        <div class="brand-divider"></div>
+        <div class="prose"><h2>Four pillars. No manual paperwork or spreadsheets.</h2></div>
+        <div class="pillar-grid">
+          <div class="pillar pillar-1"><div class="pillar-num">Pillar 01</div><h4>Smart Scheduling</h4><p>Machines aligned to actual production hours. Idle equipment flagged automatically. Schedules built on real constraints, not assumptions.</p></div>
+          <div class="pillar pillar-2"><div class="pillar-num">Pillar 02</div><h4>Full Digitalization</h4><p>Every plant-floor planning process moved from manual oversight to continuous real-time visibility — across all three sites simultaneously.</p></div>
+          <div class="pillar pillar-3"><div class="pillar-num">Pillar 03</div><h4>Unified Tracking</h4><p>Every machine and material availability under one live view — what's running, what's available, what's at risk. No more parallel spreadsheets.</p></div>
+          <div class="pillar pillar-4"><div class="pillar-num">Pillar 04</div><h4>Supply Chain Traceability</h4><p>End-to-end visibility from raw material intake to final pack. Every batch tracked, every handoff logged, 100% digital and auditable.</p></div>
+        </div>
+      </div>
+
+      <div class="article-section" id="s-results" style="padding:0;background:transparent;border:none;box-shadow:none">
+        <div class="results-block">
+          <div class="eyebrow">Transformation Results</div>
+          <h2>Nothing changed on the floor. Everything changed in the plan.</h2>
+          <p class="sub">No guesswork. Only data and results.</p>
+          <div class="results-grid">
+            <div class="result-cell"><span class="r-before">63%</span><span class="r-after green">74%↑</span><span class="r-label">On-Time Delivery</span></div>
+            <div class="result-cell"><span class="r-before">5 hours/week</span><span class="r-after blue">Instant</span><span class="r-label">Planning Time</span></div>
+            <div class="result-cell"><span class="r-before">45 min</span><span class="r-after green">18 min</span><span class="r-label">Changeover Time</span></div>
+          </div>
+        </div>
+        <div class="takeaway">
+          <p>The planner didn't change. The operation didn't change. The planning system changed — and the results followed. Factory Brain gave Avanti something spreadsheets never could: a schedule that reflects reality before the week begins.</p>
+        </div>
+      </div>
+    </article>
+
+    <aside class="article-sidebar">
+      <div class="cta-sidebar">
+        <h4>See this on your data.</h4>
+        <p>Most implementations go live in 7–14 days. No IT infrastructure required.</p>
+        <a href="https://patternlab.ai/#contact" class="cta-sidebar-btn">Request a Demo →</a>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-head"><h4>In This Article</h4></div>
+        <div class="sc-body">
+          <ul class="toc-list">
+            <li><a href="#s-challenge"  class="toc-active"><span class="toc-dot"></span>The Challenge</a></li>
+            <li><a href="#s-complexity"><span class="toc-dot"></span>The Complexity</a></li>
+            <li><a href="#s-solution">  <span class="toc-dot"></span>The Solution</a></li>
+            <li><a href="#s-installed"> <span class="toc-dot"></span>What Was Installed</a></li>
+            <li><a href="#s-pillars">   <span class="toc-dot"></span>Four Pillars</a></li>
+            <li><a href="#s-results">   <span class="toc-dot"></span>Results</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-head"><h4>Company Snapshot</h4></div>
+        <div class="sc-body">
+          <div class="snapshot-grid">
+            <div class="snapshot-cell"><div class="val">3</div><div class="lbl">Plants</div></div>
+            <div class="snapshot-cell"><div class="val">9</div><div class="lbl">Lines</div></div>
+            <div class="snapshot-cell"><div class="val">100+</div><div class="lbl">SKUs</div></div>
+            <div class="snapshot-cell"><div class="val green">74%</div><div class="lbl">OTD (after)</div></div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--color-border)">
+            <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:4px">Industry</div>
+            <div style="font-size:13px;font-weight:600;color:var(--color-text-primary)">Frozen Food Manufacturing</div>
+            <div style="font-size:12px;color:var(--color-text-muted);margin-top:8px;margin-bottom:4px">Volume</div>
+            <div style="font-size:13px;font-weight:600;color:var(--color-text-primary)">~2,500 tonnes / month</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-head"><h4>Related Reading</h4></div>
+        <div class="sc-body">
+          <div class="related-list">
+            <div class="related-item"><div class="related-thumb rt-dark"><span class="rt-num">01</span></div><div class="related-body"><h5>The Six Scheduling Strategies Every Plant Manager Should Know</h5><span>June 3, 2026</span></div></div>
+            <div class="related-item"><div class="related-thumb rt-blue"><span class="rt-num">02</span></div><div class="related-body"><h5>Why Your ERP's Schedule Is Already Wrong Before the Week Starts</h5><span>May 28, 2026</span></div></div>
+            <div class="related-item"><div class="related-thumb rt-teal"><span class="rt-num">04</span></div><div class="related-body"><h5>60 Sensors. One Day. How Godrej Jersey Wired Their Shop Floor</h5><span>May 14, 2026</span></div></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="bottom-cta">
+    <div class="bottom-cta-inner">
+      <div>
+        <h2>Ready to fix your planning problem?</h2>
+        <p>Factory Brain goes live in 7–14 days. No IT infrastructure. No integration project. Just a schedule that reflects reality.</p>
+      </div>
+      <div class="bottom-cta-actions">
+        <a href="https://patternlab.ai/#contact" class="btn btn-lg btn-primary">Request a Demo →</a>
+        <a href="https://patternlab.ai/capital-report.html" class="btn btn-lg btn-outline">Get Free Capital Report</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="article-footer">
+    <div class="article-footer-inner">
+      <div class="footer-logo-row">
+        <img src="/assets/logo_white.svg" alt="PatternLab.ai" style="height:26px;width:auto" />
+        <span>PATTERNLAB.AI</span>
+      </div>
+      <div>© 2026 PatternLab Technologies · <span class="back-link" onclick="goTo('blog')">← Back to Blog</span></div>
+    </div>
+  </footer>
+</div><!-- /page-article -->
+
+<script>
+  /* ── HAMBURGER ── */
+  document.getElementById('nav-toggle').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('nav-mobile').classList.toggle('open');
+  });
+
+  /* ── ROUTER ── */
+  function goTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    window.scrollTo(0, 0);
+    document.title = page === 'article'
+      ? 'Avanti Frozen Foods Case Study · PatternLab Blog'
+      : 'Blog · PatternLab';
+    if (page === 'article') startTOC(); else stopTOC();
+    history.replaceState(null, '', page === 'article' ? '#article' : '#');
+  }
+
+  /* ── HASH-BASED DEEP LINK ── */
+  if (window.location.hash === '#article') goTo('article');
+
+  /* ── CLICK TARGETS ── */
+  // Featured card — whole card navigates
+  document.getElementById('featured-card').addEventListener('click', function() {
+    goTo('article');
+  });
+  // Read more button — same, but stop propagation not needed since card already handles it
+  document.getElementById('read-more-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    goTo('article');
+  });
+
+  /* ── FILTER TABS ── */
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  /* ── TOC OBSERVER ── */
+  let tocObs = null;
+  function startTOC() {
+    stopTOC();
+    const links = document.querySelectorAll('.toc-list a');
+    tocObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('toc-active'));
+          const match = [...links].find(l => l.getAttribute('href') === '#' + entry.target.id);
+          if (match) match.classList.add('toc-active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+    document.querySelectorAll('#page-article [id]').forEach(s => tocObs.observe(s));
+  }
+  function stopTOC() {
+    if (tocObs) { tocObs.disconnect(); tocObs = null; }
+  }
+</script>
+</body>
+</html>

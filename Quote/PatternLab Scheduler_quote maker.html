@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/rfq -->
+<html lang="en" data-scribe-recorder-ready="true" class="brand-refresh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Share-link tokens live in the URL path; no-referrer keeps them out
+         of Referer headers on any outbound navigation. -->
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" type="image/png" href="/quote-files/logo-icon-white.png">
+    <title>PatternLab Scheduler</title>
+    <script type="module" crossorigin="" src="/quote-files/index-CcEClv2d.js.download"></script>
+    <link rel="stylesheet" crossorigin="" href="/quote-files/index-BLpm3COA.css">
+  <cs-native-frame-holder hidden=""><template shadowrootmode="closed"><iframe id="cs-native-frame" title="Intentionally blank" hidden="" sandbox="allow-same-origin"></iframe></template></cs-native-frame-holder><link rel="modulepreload" as="script" crossorigin="" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/assets/quotation-BSDrQpgQ.js"><link rel="modulepreload" as="script" crossorigin="" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/assets/jspdf.es.min-Y3YBQ1W1.js"><link rel="modulepreload" as="script" crossorigin="" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/assets/pdfUtils-GZW93WRR.js"><link rel="modulepreload" as="script" crossorigin="" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/assets/foldingCartonJobCard-C3DrfWRq.js">
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       MOBILE UX PATCH — delete from here to END MOBILE UX PATCH to revert
+       Backup: Quote/PatternLab Scheduler_quote maker.html.backup
+       ══════════════════════════════════════════════════════════════════ -->
+  <style>
+    @media (max-width: 639px) {
+      /* 1. Tighten main padding, leave room for sticky footer */
+      main { padding: 8px 8px 88px !important; }
+
+      /* 2. Stack product name above Quote/Job Card buttons */
+      .bg-brand-primary.flex { flex-direction: column !important; }
+
+      /* 3. Quote + Job Card: full-width side-by-side grid */
+      .shrink-0.flex.items-center.gap-2 {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+      .shrink-0.flex.items-center.gap-2 button {
+        display: inline-flex !important;
+        justify-content: center !important;
+        padding: 12px 8px !important;
+        font-size: 13px !important;
+      }
+
+      /* 4. Metrics strip: smaller numbers to fit 3 cols */
+      .grid-cols-3 .text-lg { font-size: 14px !important; }
+
+      /* 5. Lift copilot FAB above sticky footer */
+      .fixed.bottom-5.right-5 { bottom: 80px !important; }
+    }
+
+    /* Sticky mobile footer */
+    #qp-mob-footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      display: none;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+      box-shadow: 0 -4px 24px rgba(0,0,0,.10);
+      padding: 10px 16px;
+      align-items: center; gap: 12px;
+    }
+    @media (max-width: 639px) { #qp-mob-footer { display: flex; } }
+    #qp-mob-total-lbl { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: .09em; }
+    #qp-mob-total { font-size: 20px; font-weight: 800; color: #2563eb; line-height: 1.1; }
+    #qp-mob-dl {
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 18px; background: #059669; color: #fff;
+      border: none; border-radius: 12px; font-size: 14px; font-weight: 700;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    #qp-mob-dl:active { background: #047857; transform: scale(.97); }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      /* Build sticky footer */
+      var bar = document.createElement('div');
+      bar.id = 'qp-mob-footer';
+      bar.innerHTML =
+        '<div style="flex:1;min-width:0">' +
+          '<div id="qp-mob-total-lbl">Total</div>' +
+          '<div id="qp-mob-total">—</div>' +
+        '</div>' +
+        '<button id="qp-mob-dl">' +
+          '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6M9 11h6M9 15h4M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/>' +
+          '</svg>' +
+          'Download Quote' +
+        '</button>';
+      document.body.appendChild(bar);
+
+      /* "Download Quote" taps the app's own Quote button */
+      document.getElementById('qp-mob-dl').addEventListener('click', function () {
+        var btn = document.querySelector('[title*="Quote PDF"]');
+        if (btn) btn.click();
+      });
+
+      /* Pull Total value from the metrics strip */
+      function syncTotal () {
+        var cells = document.querySelectorAll('.text-center');
+        for (var i = 0; i < cells.length; i++) {
+          var lbl = cells[i].querySelector('[class*="uppercase"]');
+          var val = cells[i].querySelector('[class*="font-bold"]');
+          if (lbl && /total/i.test(lbl.textContent) && val) {
+            var el = document.getElementById('qp-mob-total');
+            if (el) el.textContent = val.textContent.trim();
+            return;
+          }
+        }
+      }
+
+      syncTotal();
+      /* Stay in sync as React updates the DOM */
+      new MutationObserver(syncTotal).observe(
+        document.getElementById('root') || document.body,
+        { childList: true, subtree: true, characterData: true }
+      );
+    });
+  </script>
+  <!-- ══════════════════════════════════════════════════════════════════
+       END MOBILE UX PATCH
+       ══════════════════════════════════════════════════════════════════ -->
+
+</head>
+  <body class="">
+    <div id="root"><div class="min-h-screen bg-brand-bg text-brand-ink"><header class="sticky top-0 z-40 backdrop-blur-xl bg-brand-bg/85 border-b border-brand-border"><div class="max-w-[1400px] mx-auto px-6 flex items-center justify-between h-14"><div class="flex items-center gap-5 shrink-0"><a class="flex items-center gap-2" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/plan"><span class="inline-flex items-center justify-center w-8 h-8 rounded-brand-sm bg-brand-gradient shadow-brand-btn"><img src="./PatternLab Scheduler_quote maker_files/logo-icon-white.png" alt="PatternLab" class="w-5 h-5"></span><span class="font-bold text-base tracking-tight text-brand-ink hidden sm:inline">PatternLab</span></a><nav class="flex items-center gap-1"><a class="px-3 py-1.5 rounded-brand-sm text-sm font-semibold transition-colors text-brand-ink-2 hover:text-brand-ink hover:bg-white/60" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/plan">Plan</a><div class="relative"><button class="px-3 py-1.5 rounded-brand-sm text-sm font-semibold transition-colors inline-flex items-center gap-1 text-brand-ink-2 hover:text-brand-ink hover:bg-white/60">Materials<svg class="w-3 h-3 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg></button></div><div class="relative"><button class="px-3 py-1.5 rounded-brand-sm text-sm font-semibold transition-colors inline-flex items-center gap-1 bg-brand-primary/10 text-brand-primary">RFQ<svg class="w-3 h-3 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg></button></div><div class="relative"><button class="px-3 py-1.5 rounded-brand-sm text-sm font-semibold transition-colors inline-flex items-center gap-1 text-brand-ink-2 hover:text-brand-ink hover:bg-white/60">Settings<svg class="w-3 h-3 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg></button></div><a class="px-3 py-1.5 rounded-brand-sm text-sm font-semibold transition-colors text-brand-ink-2 hover:text-brand-ink hover:bg-white/60" href="https://fde-schedv2-stage-uaiu2g-a3bha7azhqcse8d9.z03.azurefd.net/graph">Graph</a></nav></div><div class="flex items-center gap-3 min-w-0"><div class="text-right hidden sm:block min-w-0"><div class="text-xs font-medium text-brand-ink truncate max-w-[160px]">Tarun - Patternlab.ai</div><div class="text-[11px] text-brand-ink-3 truncate max-w-[160px]">tarun@patternlab.ai</div></div><button class="text-xs text-brand-ink-2 hover:text-brand-danger transition-colors px-2 py-1">Sign out</button></div></div></header><main class="max-w-[1400px] mx-auto p-6"><div class="max-w-4xl mx-auto px-1 py-2"><div class="space-y-4"><div class="grid grid-cols-3 rounded-xl overflow-hidden border border-brand-border bg-white shadow-brand-card divide-x divide-brand-border"><div class="px-4 py-3 text-center"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Quantity</div><div class="text-lg font-bold mt-0.5 text-brand-ink">10,000</div></div><div class="px-4 py-3 text-center"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Price / unit</div><div class="text-lg font-bold mt-0.5 text-brand-ink">₹1.38</div></div><div class="px-4 py-3 text-center"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Total</div><div class="text-lg font-bold mt-0.5 text-brand-primary">₹13,800</div></div></div><div class="bg-white rounded-2xl border border-brand-border shadow-brand-card overflow-hidden"><div class="px-6 py-4 bg-brand-primary text-white flex items-start justify-between gap-4"><div class="min-w-0"><span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/20 border border-white/25 mb-1.5">📦 Folding Carton</span><div class="text-lg font-bold truncate">CARTON FOR ARIPREX 15 TABLETS (3x10 TABLETS) (SUAKL3)</div><div class="text-blue-100 text-xs mt-0.5 truncate">UNICHEM LABORATORIES LTD.</div></div><div class="shrink-0 flex items-center gap-2"><button title="Generate the Quote PDF (opens in a preview pop-up)" class="inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-lg bg-white text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 shadow-sm transition-colors"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6M9 11h6M9 15h4M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"></path></svg>Quote</button><button title="Generate the Job Card PDF (opens in a preview pop-up)" class="inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-lg bg-white text-brand-primary hover:bg-blue-50 disabled:opacity-50 shadow-sm transition-colors"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h8M8 17h5"></path></svg>Job Card</button></div></div><div class="px-6 py-4 border-t border-brand-border bg-brand-bg-alt/20"><div class="text-[11px] font-semibold uppercase tracking-wider text-brand-ink-3 mb-2">Order details</div><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="block"><span class="block text-[11px] font-medium text-brand-ink-3 mb-1">Order quantity <span class="text-rose-500">*</span></span><input type="number" min="1" class="w-full border border-brand-border rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary/50 outline-none" value="10000"></label><label class="block"><span class="block text-[11px] font-medium text-brand-ink-3 mb-1">Customer</span><input class="w-full border border-brand-border rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary/50 outline-none" value="UNICHEM LABORATORIES LTD."></label><label class="block"><span class="block text-[11px] font-medium text-brand-ink-3 mb-1">Due date</span><input type="date" class="w-full border border-brand-border rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary/50 outline-none" value=""></label></div></div><div class="px-6 py-4 border-t border-brand-border"><div class="text-[11px] font-semibold uppercase tracking-wider text-brand-ink-3 mb-2">Specification</div><div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="rounded-xl border px-3 py-2.5 border-brand-border bg-brand-bg-alt/30"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Dimensions</div><div class="text-sm font-medium truncate text-brand-ink" title="118 × 20 × 54 mm">118 × 20 × 54 mm</div></div><div class="rounded-xl border px-3 py-2.5 border-brand-border bg-brand-bg-alt/30"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Material</div><div class="text-sm font-medium truncate text-brand-ink" title="Folding Box Board (CFB) - ITC Cyber XL, GC2">Folding Box Board (CFB) - ITC Cyber XL, GC2</div></div><div class="rounded-xl border px-3 py-2.5 border-brand-border bg-brand-bg-alt/30"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">GSM</div><div class="text-sm font-medium truncate text-brand-ink" title="300">300</div></div><div class="rounded-xl border px-3 py-2.5 border-brand-border bg-brand-bg-alt/30"><div class="text-[10px] uppercase tracking-wider text-brand-ink-3">Print colours</div><div class="text-sm font-medium truncate text-brand-ink" title="—">—</div></div></div><div class="mt-3 flex flex-wrap gap-1.5"><span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-brand-bg-alt text-brand-ink-2 border border-brand-border capitalize">varnish</span><span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-brand-bg-alt text-brand-ink-2 border border-brand-border capitalize">Aqua varnish</span></div></div><div class="px-6 py-4 border-t border-brand-border flex items-center justify-between gap-3"><button class="inline-flex items-center gap-1.5 text-xs font-medium text-brand-ink-3 hover:text-brand-ink"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M5 9a7 7 0 0111-3m3 9a7 7 0 01-11 3"></path></svg> Start over</button><button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-brand-primary bg-white border border-brand-border hover:border-brand-primary/50 hover:bg-brand-bg-alt/40 transition-colors">Open calculator <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"></path></svg></button></div></div></div></div></main></div><div style=""><button type="button" class="fixed bottom-5 right-5 z-[60] inline-flex items-center gap-2 pl-2 pr-4 py-2 rounded-full bg-brand-primary text-white text-sm font-semibold shadow-brand-lg hover:bg-brand-primary/90 transition-colors animate-pulse" aria-label="Ask Production Copilot"><img src="./PatternLab Scheduler_quote maker_files/logo-icon-white.png" alt="" class="w-5 h-5">Ask Production Copilot</button></div></div>
+  
+
+<ug-extension></ug-extension><scribe-shadow id="crxjs-ext" data-crx="okfkdaglfjjjfefdcppliegebpoegaii" style="position: fixed; width: 0px; height: 0px; top: 0px; left: 0px; z-index: 2147483647; overflow: visible; visibility: visible;"><template shadowrootmode="open"><div id="root-scribe-elem" style="position: fixed; width: 0px; height: 0px; top: 0px; left: 0px; overflow: visible; color: rgb(21, 24, 30);"><div class="brand-refresh" style="display: contents;"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;"><ol tabindex="-1" class="fixed bottom-auto right-0 top-0 z-[999999] flex max-h-screen w-[400px] max-w-full p-4 pointer-events-none"></ol></div></div></div><link rel="stylesheet" href="chrome-extension://okfkdaglfjjjfefdcppliegebpoegaii/assets/style.css"></template></scribe-shadow></body></html>

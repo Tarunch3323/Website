@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PatternLab · Factory Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #0d1117;
+  --ink:  #f9fafb;
+  --muted:#6b7280;
+  --blue: #5189f3;
+  --green:#22c55e;
+  --border:rgba(81,137,243,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+
+/* Scene */
+.vignette{position:fixed;inset:0;z-index:0;background:#000;}
+#scene{position:fixed;inset:0;z-index:1;cursor:grab;}
+#scene.dragging{cursor:grabbing;}
+#scene.panning{cursor:move;}
+#labels{position:fixed;inset:0;z-index:2;pointer-events:none;}
+#fe-particles{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;}
+
+/* Logo */
+#logo{
+  position:fixed;top:28px;left:40px;z-index:10;
+  display:flex;align-items:center;gap:10px;pointer-events:none;
+}
+#logo-text{
+  font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink);opacity:.8;
+}
+
+/* Title */
+#title{
+  position:fixed;left:40px;bottom:48px;z-index:10;
+  pointer-events:none;max-width:380px;
+  opacity:0;transition:opacity .8s ease;
+}
+#title.show{opacity:1;}
+#title-kicker{
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+#title-kicker::before{content:'';width:20px;height:1px;background:var(--blue);}
+#title h1{
+  font-size:clamp(1.8rem,3vw,2.8rem);font-weight:800;
+  letter-spacing:-.03em;line-height:1.05;margin-bottom:10px;
+}
+#title h1 span{color:var(--blue);}
+#title p{font-size:12px;line-height:1.7;color:var(--muted);}
+
+/* Corner brackets */
+.bracket{position:fixed;width:24px;height:24px;border:1px solid var(--border);z-index:10;pointer-events:none;transition:opacity .5s;}
+.tl{top:20px;left:20px;border-right:none;border-bottom:none;}
+.tr{top:20px;right:20px;border-left:none;border-bottom:none;}
+.bl{bottom:20px;left:20px;border-right:none;border-top:none;}
+.br{bottom:20px;right:20px;border-left:none;border-top:none;}
+
+/* ── Toolbar ─────────────────────────────────────── */
+#toolbar{
+  position:fixed;right:24px;top:50%;transform:translateY(-50%);
+  z-index:10;display:flex;flex-direction:column;gap:6px;
+  opacity:0;transition:opacity .6s ease;
+}
+#toolbar.show{opacity:1;}
+.tb-group{
+  display:flex;flex-direction:column;
+  background:rgba(13,17,23,.88);
+  border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  backdrop-filter:blur(16px);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.tb-btn{
+  width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;
+  color:rgba(249,250,251,.55);
+  font-size:18px;cursor:pointer;
+  transition:background .15s,color .15s;
+  border-bottom:1px solid rgba(81,137,243,.1);
+  user-select:none;position:relative;
+}
+.tb-btn:last-child{border-bottom:none;}
+.tb-btn:hover{background:rgba(81,137,243,.15);color:#fff;}
+.tb-btn:active{background:rgba(81,137,243,.3);}
+.tb-btn.active{color:var(--blue);}
+/* Tooltip */
+.tb-btn::after{
+  content:attr(data-tip);
+  position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:rgba(13,17,23,.95);border:1px solid var(--border);
+  color:var(--ink);font-family:'Inter',sans-serif;font-size:10px;font-weight:500;
+  padding:4px 9px;border-radius:5px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .15s;
+}
+.tb-btn:hover::after{opacity:1;}
+/* Zoom level badge */
+#zoomBadge{
+  background:rgba(13,17,23,.88);border:1px solid var(--border);
+  border-radius:6px;padding:5px 0;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--muted);backdrop-filter:blur(12px);width:42px;
+}
+
+/* ── Hint strip ──────────────────────────────────── */
+#hint{
+  position:fixed;top:28px;right:80px;z-index:10;
+  display:flex;border:1px solid var(--border);
+  background:rgba(13,17,23,.75);backdrop-filter:blur(10px);
+  border-radius:6px;overflow:hidden;
+  opacity:0;transition:opacity .6s;pointer-events:none;
+}
+#hint.show{opacity:1;}
+.hint-item{
+  display:flex;align-items:center;gap:6px;padding:7px 12px;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  border-right:1px solid var(--border);
+}
+.hint-item:last-child{border-right:none;}
+.hint-icon{color:var(--blue);font-size:11px;}
+
+/* ── Node tooltip ────────────────────────────────── */
+#tip{
+  position:fixed;z-index:12;
+  background:rgba(13,17,23,.96);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;
+  font-size:12px;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+  max-width:200px;
+}
+#tip.show{opacity:1;}
+#tip-name{font-weight:700;color:var(--blue);margin-bottom:3px;}
+#tip-count{font-size:11px;color:var(--muted);}
+
+/* ── Loading ─────────────────────────────────────── */
+#loading{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:20;color:var(--blue);font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;animation:blink 1.4s steps(2) infinite;
+}
+@keyframes blink{50%{opacity:.2;}}
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+<div id="scene"></div>
+<div id="labels"></div>
+<canvas id="fe-particles" aria-hidden="true"></canvas>
+<div id="loading">Initializing…</div>
+
+<!-- Logo -->
+<div id="logo">
+  <svg width="26" height="26" viewBox="0 0 82 85" fill="none">
+    <ellipse cx="41" cy="43" rx="35" ry="35" stroke="#5189f3" stroke-width="2.5" fill="none"/>
+    <ellipse cx="41" cy="43" rx="24" ry="24" stroke="#5189f3" stroke-width="2" fill="none" opacity=".7"/>
+    <ellipse cx="41" cy="43" rx="13" ry="13" stroke="#5189f3" stroke-width="1.5" fill="none" opacity=".5"/>
+    <ellipse cx="41" cy="43" rx="4"  ry="4"  fill="#5189f3"/>
+  </svg>
+  <span id="logo-text">PATTERNLAB.AI</span>
+</div>
+
+<!-- Corner brackets -->
+<div class="bracket tl"></div>
+<div class="bracket tr"></div>
+<div class="bracket bl"></div>
+<div class="bracket br"></div>
+
+<!-- Title -->
+<div id="title">
+  <div id="title-kicker">Factory Brain · Knowledge Graph</div>
+  <h1>Every node.<br/><span>One brain.</span></h1>
+  <p>From raw material to finished goods — every machine, workcenter, BOM, and order wired into one living graph.</p>
+</div>
+
+<!-- Interaction hint -->
+<div id="hint">
+  <div class="hint-item"><span class="hint-icon">↺</span> Drag to rotate</div>
+  <div class="hint-item"><span class="hint-icon">⊕</span> Scroll to zoom</div>
+  <div class="hint-item"><span class="hint-icon">✥</span> Right-drag to pan</div>
+  <div class="hint-item"><span class="hint-icon">↻</span> Dbl-click reset</div>
+</div>
+
+<!-- Toolbar -->
+<div id="toolbar">
+  <!-- Zoom -->
+  <div class="tb-group">
+    <button class="tb-btn" id="btnZoomIn"  data-tip="Zoom in">+</button>
+    <div id="zoomBadge">100%</div>
+    <button class="tb-btn" id="btnZoomOut" data-tip="Zoom out">−</button>
+  </div>
+  <!-- Actions removed -->
+</div>
+
+<!-- Node tooltip -->
+<div id="tip"><div id="tip-name"></div><div id="tip-count"></div></div>
+
+<script>
+const cdns = [
+      'https://unpkg.com/three@0.149.0/build/three.min.js',
+      'https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.149.0/three.min.js'
+    ];
+
+    function loadScript(urls, idx = 0) {
+      return new Promise((resolve, reject) => {
+        if (idx >= urls.length) return reject(new Error('All CDNs failed'));
+        const s = document.createElement('script');
+        s.src = urls[idx];
+        s.onload = resolve;
+        s.onerror = () => loadScript(urls, idx + 1).then(resolve).catch(reject);
+        document.head.appendChild(s);
+      });
+    }
+
+    loadScript(cdns)
+      .then(() => {
+        document.getElementById('loading').style.display = 'none';
+        initScene();
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error-banner').style.display = 'block';
+      });
+
+    function initScene() {
+      const container = document.getElementById('scene');
+      const labelLayer = document.getElementById('labels');
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 100);
+      // Start camera high above looking down — brain reads as a small ball.
+      // Intro animation will ease it to the front view (0, 0.2, 5.5).
+      camera.position.set(0, 14, 0.6);
+      camera.lookAt(0, 0, 0);
+
+      // ======= BRAIN SHAPE =======
+      function brainShape(u, v) {
+        const theta = u * Math.PI * 2;
+        const phi = v * Math.PI;
+        let x = 1.75 * Math.sin(phi) * Math.cos(theta);
+        let y = 1.05 * Math.cos(phi);
+        let z = 1.30 * Math.sin(phi) * Math.sin(theta);
+
+        const fissureMask = Math.exp(-Math.pow(x / 0.22, 2));
+        y -= fissureMask * 0.22 * Math.sin(phi);
+
+        const ridges =
+          Math.sin(theta * 7 + phi * 5) * 0.09 +
+          Math.sin(phi * 11) * 0.06 +
+          Math.sin(theta * 13 - phi * 7) * 0.045;
+        const n = new THREE.Vector3(x, y, z).normalize();
+        x += n.x * ridges; y += n.y * ridges; z += n.z * ridges;
+
+        const frontal = Math.exp(-((z - 1.0) ** 2 + (y - 0.4) ** 2) / 0.6);
+        z += frontal * 0.12;
+
+        const cere = Math.exp(-((z + 1.1) ** 2 + (y + 0.5) ** 2) / 0.22);
+        z -= cere * 0.18; y -= cere * 0.22;
+
+        return new THREE.Vector3(x, y, z);
+      }
+
+      // ======= STAGES =======
+      const STAGES = [
+        { name: 'RAW MATERIALS',  u: 0.02, v: 0.18, order: 0,  count: 3204 },
+        { name: 'PROCUREMENT',    u: 0.12, v: 0.08, order: 1,  count: 5821 },
+        { name: 'BOM',            u: 0.22, v: 0.20, order: 2,  count: 1240 },
+        { name: 'WORKCENTERS',    u: 0.08, v: 0.40, order: 3,  count:  864 },
+        { name: 'ORDERS',         u: 0.18, v: 0.52, order: 4,  count: 2104 },
+        { name: 'CAPACITY',       u: 0.30, v: 0.65, order: 5,  count: 1532 },
+        { name: 'SCHEDULING',     u: 0.42, v: 0.45, order: 6,  count: 1860 },
+        { name: 'ROUTING',        u: 0.48, v: 0.30, order: 7,  count: 9421 },
+        { name: 'CHANGEOVERS',    u: 0.55, v: 0.55, order: 8,  count: 2210 },
+        { name: 'CONSTRAINTS',    u: 0.62, v: 0.18, order: 9,  count:  142 },
+        { name: 'INVENTORY',      u: 0.70, v: 0.40, order: 10, count: 3340 },
+        { name: 'ALLOCATION',     u: 0.78, v: 0.60, order: 11, count: 4680 },
+        { name: 'RELEASE',        u: 0.85, v: 0.30, order: 12, count: 1890 },
+        { name: 'PRODUCTION',     u: 0.90, v: 0.50, order: 13, count: 2540 },
+        { name: 'QUALITY',        u: 0.96, v: 0.20, order: 14, count: 7820 },
+        { name: 'DISPATCH',       u: 0.05, v: 0.75, order: 15, count: 6120 },
+        { name: 'ON-TIME',        u: 0.20, v: 0.88, order: 16, count: 4310 },
+        { name: 'CUSTOMERS',      u: 0.40, v: 0.92, order: 17, count: 18420 },
+        { name: 'FEEDBACK',       u: 0.58, v: 0.85, order: 18, count:  720 },
+      ];
+      const clusterAnchors = STAGES.map(d => ({ ...d, pos: brainShape(d.u, d.v).multiplyScalar(1.02) }));
+
+      // ======= NODES =======
+      const NODE_COUNT = 1800;
+      const nodePositions = [];
+      const nodeColors = [];
+      const nodeSizes = [];
+      const nodeMeta = [];
+
+      const colorCyan   = new THREE.Color(0x5189f3);
+      const colorAmber  = new THREE.Color(0xf59e0b);
+      const colorViolet = new THREE.Color(0x6366f1);
+
+      // FIX #2: cyan-dominant palette. Only a small fraction of nodes get
+      // accent colors, and they're mostly desaturated. This keeps the brain
+      // reading as a coherent cool-toned object instead of an amber/violet blob.
+      function stageColor(order, isAccent) {
+        if (isAccent) {
+          // every ~5th stage gets an accent tint, picked deterministically
+          const accentChoice = order % 3;
+          if (accentChoice === 0) return colorCyan.clone();
+          if (accentChoice === 1) return colorAmber.clone().lerp(colorCyan, 0.55); // muted amber
+          return colorViolet.clone().lerp(colorCyan, 0.50); // muted violet
+        }
+        // base nodes: cyan with slight variation
+        return colorCyan.clone().multiplyScalar(0.75 + Math.random() * 0.2);
+      }
+
+      for (let i = 0; i < NODE_COUNT; i++) {
+        let u, v, clusterIdx;
+        if (Math.random() < 0.65) {
+          clusterIdx = Math.floor(Math.random() * STAGES.length);
+          const c = STAGES[clusterIdx];
+          const spread = 0.08;
+          u = (c.u + (Math.random() - 0.5) * spread + 1) % 1;
+          v = Math.max(0.02, Math.min(0.98, c.v + (Math.random() - 0.5) * spread));
+        } else {
+          u = Math.random(); v = Math.random(); clusterIdx = -1;
+        }
+
+        const p = brainShape(u, v);
+        p.multiplyScalar(1 + (Math.random() - 0.5) * 0.03);
+        nodePositions.push(p.x, p.y, p.z);
+
+        let col;
+        if (clusterIdx >= 0) {
+          // Only ~25% of cluster nodes get accent colors — rest stay cyan
+          const isAccent = Math.random() < 0.25;
+          col = stageColor(STAGES[clusterIdx].order, isAccent);
+        } else {
+          col = colorCyan.clone().multiplyScalar(0.45 + Math.random() * 0.15);
+        }
+        nodeColors.push(col.r, col.g, col.b);
+        nodeSizes.push(clusterIdx >= 0 ? 0.7 + Math.random() * 0.6 : 0.4 + Math.random() * 0.4);
+        nodeMeta.push({ pos: p, clusterIdx });
+      }
+
+      const nodeGeo = new THREE.BufferGeometry();
+      nodeGeo.setAttribute('position', new THREE.Float32BufferAttribute(nodePositions, 3));
+      nodeGeo.setAttribute('color', new THREE.Float32BufferAttribute(nodeColors, 3));
+      nodeGeo.setAttribute('size', new THREE.Float32BufferAttribute(nodeSizes, 1));
+
+      // FIX #1: corrected point size formula.
+      // Old: gl_PointSize = size * pulse * (260.0 / -mv.z)  -> 65px+ blobs
+      // New: drop the multiplier to a sane value and clamp at the top.
+      // With camera at z=5.5, brain front ~z=1.3, mv.z range is ~3-7.
+      // 60.0 / 4 = 15px base, * size(0.7-1.3) * pulse(~1) = 10-20px nodes.
+      // Then we clamp to 22px max to be safe.
+      const nodeMat = new THREE.ShaderMaterial({
+        uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() } },
+        vertexShader: `
+          attribute float size;
+          attribute vec3 color;
+          varying vec3 vColor;
+          uniform float uTime;
+          uniform float uPixelRatio;
+          void main() {
+            vColor = color;
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            float pulse = 0.95 + 0.10 * sin(uTime * 1.6 + position.x * 5.0 + position.y * 4.0);
+            // sane size formula + hard clamp
+            float px = size * pulse * (60.0 / -mv.z) * uPixelRatio;
+            gl_PointSize = clamp(px, 1.5, 22.0);
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vColor;
+          void main() {
+            vec2 c = gl_PointCoord - vec2(0.5);
+            float d = length(c);
+            if (d > 0.5) discard;
+            float core = smoothstep(0.5, 0.30, d);
+            gl_FragColor = vec4(vColor, core);
+          }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.NormalBlending,
+      });
+      const points = new THREE.Points(nodeGeo, nodeMat);
+
+      // ======= EDGES =======
+      const edgeIdx = [];
+      const edgeTypes = [];
+      const stageToNodes = STAGES.map(() => []);
+      for (let i = 0; i < NODE_COUNT; i++) {
+        if (nodeMeta[i].clusterIdx >= 0) stageToNodes[nodeMeta[i].clusterIdx].push(i);
+      }
+
+      const stagesByOrder = STAGES.map((s, idx) => ({ s, idx })).sort((a, b) => a.s.order - b.s.order);
+
+      for (let k = 0; k < stagesByOrder.length - 1; k++) {
+        const fromNodes = stageToNodes[stagesByOrder[k].idx];
+        const toNodes = stageToNodes[stagesByOrder[k + 1].idx];
+        if (!fromNodes.length || !toNodes.length) continue;
+        const linkCount = 14;
+        for (let l = 0; l < linkCount; l++) {
+          const a = fromNodes[Math.floor(Math.random() * fromNodes.length)];
+          const b = toNodes[Math.floor(Math.random() * toNodes.length)];
+          edgeIdx.push(a, b);
+          edgeTypes.push(Math.random() < 0.6 ? 1 : 0);
+        }
+      }
+
+      for (let k = 0; k < 200; k++) {
+        const a = Math.floor(Math.random() * NODE_COUNT);
+        const b = Math.floor(Math.random() * NODE_COUNT);
+        if (a !== b && nodeMeta[a].clusterIdx >= 0 && nodeMeta[b].clusterIdx >= 0
+          && nodeMeta[a].clusterIdx !== nodeMeta[b].clusterIdx) {
+          edgeIdx.push(a, b);
+          edgeTypes.push(Math.random() < 0.55 ? 0 : 2);
+        }
+      }
+
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const ci = nodeMeta[i].clusterIdx;
+        if (ci < 0 || Math.random() > 0.4) continue;
+        const peers = stageToNodes[ci];
+        const j = peers[Math.floor(Math.random() * peers.length)];
+        if (j !== i) { edgeIdx.push(i, j); edgeTypes.push(0); }
+      }
+
+      const flowColors = [
+        new THREE.Color(0x7fe3ff),
+        new THREE.Color(0xffb878),
+        new THREE.Color(0xb89bff),
+      ];
+
+      const edgePositions = new Float32Array(edgeIdx.length * 3);
+      const edgeColors = new Float32Array(edgeIdx.length * 3);
+      for (let e = 0; e < edgeIdx.length / 2; e++) {
+        const col = flowColors[edgeTypes[e]];
+        for (let k = 0; k < 2; k++) {
+          const idx = edgeIdx[e * 2 + k];
+          edgePositions[(e * 2 + k) * 3]     = nodePositions[idx * 3];
+          edgePositions[(e * 2 + k) * 3 + 1] = nodePositions[idx * 3 + 1];
+          edgePositions[(e * 2 + k) * 3 + 2] = nodePositions[idx * 3 + 2];
+          // Edges desaturated toward cyan too — but keep enough type-color to read
+          const mixed = col.clone().lerp(colorCyan, 0.4);
+          edgeColors[(e * 2 + k) * 3]     = mixed.r * 0.4;
+          edgeColors[(e * 2 + k) * 3 + 1] = mixed.g * 0.4;
+          edgeColors[(e * 2 + k) * 3 + 2] = mixed.b * 0.4;
+        }
+      }
+      const edgeGeo = new THREE.BufferGeometry();
+      edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePositions, 3));
+      edgeGeo.setAttribute('color', new THREE.BufferAttribute(edgeColors, 3));
+      const lines = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.NormalBlending,
+        depthWrite: false,
+      }));
+
+      // ======= FLOW PARTICLES — keep their flow colors (this is where amber/violet *should* show) =======
+      const EDGE_COUNT = edgeIdx.length / 2;
+
+      function makeFlow(count, color, speedRange, sizeMul, useSquare, filterType) {
+        const pos = new Float32Array(count * 3);
+        const col = new Float32Array(count * 3);
+        const state = [];
+        const validEdges = [];
+        for (let e = 0; e < EDGE_COUNT; e++) {
+          if (edgeTypes[e] === filterType) validEdges.push(e);
+        }
+        if (validEdges.length === 0) validEdges.push(0);
+        for (let i = 0; i < count; i++) {
+          state.push({
+            edge: validEdges[Math.floor(Math.random() * validEdges.length)],
+            t: Math.random(),
+            speed: speedRange[0] + Math.random() * (speedRange[1] - speedRange[0]),
+            validEdges
+          });
+          col[i*3] = color.r; col[i*3+1] = color.g; col[i*3+2] = color.b;
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+
+        // FIX #1 applied to flow particles too: sane size formula + clamp
+        const mat = new THREE.ShaderMaterial({
+          uniforms: { uSize: { value: sizeMul }, uPixelRatio: { value: renderer.getPixelRatio() } },
+          vertexShader: `
+            attribute vec3 color;
+            varying vec3 vColor;
+            uniform float uSize;
+            uniform float uPixelRatio;
+            void main() {
+              vColor = color;
+              vec4 mv = modelViewMatrix * vec4(position, 1.0);
+              float px = uSize * (60.0 / -mv.z) * uPixelRatio;
+              gl_PointSize = clamp(px, 2.0, 14.0);
+              gl_Position = projectionMatrix * mv;
+            }
+          `,
+          fragmentShader: useSquare ? `
+            varying vec3 vColor;
+            void main() {
+              vec2 c = gl_PointCoord - vec2(0.5);
+              float box = max(abs(c.x), abs(c.y));
+              if (box > 0.45) discard;
+              float edge = smoothstep(0.45, 0.32, box);
+              gl_FragColor = vec4(vColor, edge);
+            }
+          ` : `
+            varying vec3 vColor;
+            void main() {
+              vec2 c = gl_PointCoord - vec2(0.5);
+              float d = length(c);
+              if (d > 0.5) discard;
+              float core = smoothstep(0.5, 0.30, d);
+              gl_FragColor = vec4(vColor, core);
+            }
+          `,
+          transparent: true,
+          depthWrite: false,
+          blending: THREE.NormalBlending,
+        });
+
+        return { points: new THREE.Points(geo, mat), pos, geo, state };
+      }
+
+      // Flow particles can stay vivid — they're small and the eye reads them as
+      // "data in motion", not as the brain's structural color
+      const flowInfo  = makeFlow(70, flowColors[0], [0.7, 1.2], 2.5, false, 0);
+      const flowGoods = makeFlow(55, flowColors[1], [0.18, 0.32], 4.0, true, 1);
+      const flowMoney = makeFlow(40, flowColors[2], [0.4, 0.7], 3.0, false, 2);
+
+      // ======= ORBITAL RINGS — dimmer =======
+      function makeRing(radius, color, opacity, dashCount) {
+        const segments = 256;
+        const positions = [];
+        const colors = [];
+        for (let i = 0; i < segments; i++) {
+          const a = (i / segments) * Math.PI * 2;
+          positions.push(Math.cos(a) * radius, 0, Math.sin(a) * radius);
+          const period = Math.max(1, Math.floor(segments / dashCount));
+          const dashOn = (i % period) < period * 0.55;
+          const c = new THREE.Color(color).multiplyScalar(dashOn ? 0.6 : 0.08);
+          colors.push(c.r, c.g, c.b);
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        return new THREE.LineLoop(geo, new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity,
+          blending: THREE.NormalBlending,
+          depthWrite: false,
+        }));
+      }
+
+      const ring1 = makeRing(2.5, 0x7fe3ff, 0.35, 80);
+      ring1.rotation.x = Math.PI / 2 + 0.15; ring1.rotation.z = 0.1;
+      const ring2 = makeRing(2.95, 0xffb878, 0.18, 60);
+      ring2.rotation.x = Math.PI / 2 - 0.25; ring2.rotation.z = -0.2;
+      const ring3 = makeRing(3.35, 0xb89bff, 0.15, 100);
+      ring3.rotation.x = Math.PI / 2 + 0.4; ring3.rotation.z = 0.3;
+
+      // ======= ASSEMBLE =======
+      const brainGroup = new THREE.Group();
+      brainGroup.add(lines);
+      brainGroup.add(points);
+      brainGroup.add(flowInfo.points);
+      brainGroup.add(flowGoods.points);
+      brainGroup.add(flowMoney.points);
+      scene.add(brainGroup);
+
+      const ringGroup = new THREE.Group();
+      ringGroup.add(ring1, ring2, ring3);
+      scene.add(ringGroup);
+
+      // labels removed
+      const labelEls = clusterAnchors.map(() => ({ style: {} })); // dummy objects
+      setTimeout(() => {}, 500);
+
+      // ======= INTERACTION: rotate · zoom · pan =======
+      const rotation = { yaw: 0, pitch: 0 };
+      const velocity = { yaw: 0, pitch: 0 };
+      const drag     = { active: false, lastX: 0, lastY: 0 };
+      let userHasInteracted = false;
+      const PITCH_LIMIT = Math.PI / 2 - 0.15;
+
+      // Zoom
+      let zoom       = 1.0;
+      let zoomTarget = 1.0;
+      const ZOOM_MIN = 0.25;
+      const ZOOM_MAX = 4.0;
+      const ZOOM_DEFAULT = 1.0;
+
+      // Pan
+      const pan       = { x: 0, y: 0 };
+      const panTarget = { x: 0, y: 0 };
+      let panMode     = false;   // false=rotate, true=pan
+
+      const activePointers = new Map();
+      let pinchPrevDist = 0;
+
+      // Auto-spin toggle
+      let autoSpin = true;
+
+      let idleBreath = 0;
+      let spinResume = 0;
+
+      const sceneEl = document.getElementById('scene');
+
+      // ── Hint UI ──
+      const hintEl      = document.getElementById('interact-hint');
+      const zoomResetEl = document.getElementById('zoom-reset-btn');
+      let hintShown = false;
+      let hintDismissTimer = null;
+
+      // Show hint 2s after intro finishes
+      setTimeout(() => {
+        if (!userHasInteracted && hintEl) {
+          hintEl.classList.add('visible');
+          hintShown = true;
+        }
+      }, 3400);
+
+      function dismissHint() {
+        if (hintEl) {
+          hintEl.classList.remove('visible');
+          hintEl.classList.add('hidden');
+        }
+      }
+
+      // ── Reset helper ──
+      function doReset() {
+        zoomTarget = ZOOM_DEFAULT;
+        panTarget.x = 0; panTarget.y = 0;
+        rotation.yaw = 0; rotation.pitch = 0;
+        velocity.yaw = 0.014; velocity.pitch = 0;
+        userHasInteracted = false;
+        spinResume = 0;
+      }
+
+      // ── Old zoom-reset button (kept for compat) ──
+      if (zoomResetEl) zoomResetEl.addEventListener('click', doReset);
+
+      // ── Double-click to reset ──
+      sceneEl.addEventListener('dblclick', doReset);
+
+      // ── Toolbar buttons ──
+      const ctrlZoomIn  = document.getElementById('btnZoomIn');
+      const ctrlZoomOut = document.getElementById('btnZoomOut');
+      const ctrlReset   = document.getElementById('btnReset');
+      const ctrlAutoSpin= document.getElementById('btnSpin');
+      const ctrlPanMode = document.getElementById('btnPan');
+      const ctrlRotMode = document.getElementById('btnRot');
+      const toolbar     = document.getElementById('ctrl-toolbar');
+      const nodeTip     = document.getElementById('node-tip');
+      const tipName     = document.getElementById('tipName');
+      const tipCount    = document.getElementById('tipCount');
+
+      if (ctrlZoomIn)  ctrlZoomIn.addEventListener('click',  () => { zoomTarget = Math.min(ZOOM_MAX, zoomTarget * 1.35); });
+      if (ctrlZoomOut) ctrlZoomOut.addEventListener('click', () => { zoomTarget = Math.max(ZOOM_MIN, zoomTarget / 1.35); });
+      if (ctrlReset)   ctrlReset.addEventListener('click',   doReset);
+      if (ctrlAutoSpin) ctrlAutoSpin.addEventListener('click', () => {
+        autoSpin = !autoSpin;
+        ctrlAutoSpin.classList.toggle('active', autoSpin);
+        if (autoSpin) { spinResume = 0; userHasInteracted = false; }
+      });
+      if (ctrlPanMode) ctrlPanMode.addEventListener('click', () => {
+        panMode = true;
+        ctrlPanMode.classList.add('active');
+        ctrlRotMode.classList.remove('active');
+        sceneEl.style.cursor = 'move';
+      });
+      if (ctrlRotMode) ctrlRotMode.addEventListener('click', () => {
+        panMode = false;
+        ctrlRotMode.classList.add('active');
+        ctrlPanMode.classList.remove('active');
+        sceneEl.style.cursor = 'grab';
+      });
+
+      // Show toolbar after intro
+      setTimeout(() => { if (toolbar) toolbar.classList.remove('hidden'); }, 3200);
+      if (toolbar) toolbar.classList.add('hidden');
+
+      // ── Minimap ──
+      const minimap       = document.getElementById('minimap');
+      const minimapCanvas = document.getElementById('minimapCanvas');
+      const mmCtx         = minimapCanvas ? minimapCanvas.getContext('2d') : null;
+      minimapCanvas && (minimapCanvas.width = 90) && (minimapCanvas.height = 90);
+      setTimeout(() => minimap && minimap.classList.add('show'), 3500);
+
+      function drawMinimap() {
+        if (!mmCtx) return;
+        mmCtx.clearRect(0, 0, 90, 90);
+        // Brain silhouette ring
+        mmCtx.beginPath();
+        mmCtx.arc(45, 45, 36, 0, Math.PI * 2);
+        mmCtx.strokeStyle = 'rgba(81,137,243,.25)';
+        mmCtx.lineWidth = 1;
+        mmCtx.stroke();
+        // Camera direction dot
+        const camAngle = rotation.yaw;
+        const dx = Math.sin(camAngle) * 28;
+        const dy = -Math.cos(camAngle) * 28;
+        mmCtx.beginPath();
+        mmCtx.arc(45 + dx * 0.5, 45 + dy * 0.5, 4, 0, Math.PI * 2);
+        mmCtx.fillStyle = '#5189f3';
+        mmCtx.fill();
+        // Zoom ring
+        const r = 10 + (1/zoom) * 14;
+        mmCtx.beginPath();
+        mmCtx.arc(45, 45, Math.min(r, 38), 0, Math.PI * 2);
+        mmCtx.strokeStyle = 'rgba(81,137,243,.18)';
+        mmCtx.lineWidth = 1;
+        mmCtx.stroke();
+      }
+
+      // ── Pointer helpers ──
+      function pinchDistance() {
+        const pts = Array.from(activePointers.values());
+        if (pts.length < 2) return 0;
+        const dx = pts[0].x - pts[1].x, dy = pts[0].y - pts[1].y;
+        return Math.hypot(dx, dy);
+      }
+
+      sceneEl.addEventListener('pointerdown', (e) => {
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        sceneEl.setPointerCapture(e.pointerId);
+        if (!userHasInteracted) { userHasInteracted = true; dismissHint(); }
+        if (activePointers.size === 1) {
+          drag.active = true;
+          drag.lastX = e.clientX; drag.lastY = e.clientY;
+          velocity.yaw = 0; velocity.pitch = 0;
+          // Right-click or middle-click = pan regardless of mode
+          const isPan = panMode || e.button === 2 || e.button === 1;
+          drag.isPan = isPan;
+          sceneEl.classList.add(isPan ? 'panning' : 'dragging');
+        } else if (activePointers.size === 2) {
+          drag.active = false;
+          sceneEl.classList.remove('dragging', 'panning');
+          pinchPrevDist = pinchDistance();
+        }
+      });
+
+      sceneEl.addEventListener('pointermove', (e) => {
+        if (!activePointers.has(e.pointerId)) return;
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (activePointers.size >= 2) {
+          const d = pinchDistance();
+          if (pinchPrevDist > 0 && d > 0) {
+            const ratio = pinchPrevDist / d;
+            zoomTarget = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomTarget * ratio));
+          }
+          pinchPrevDist = d;
+          return;
+        }
+
+        if (!drag.active) return;
+        const dx = e.clientX - drag.lastX;
+        const dy = e.clientY - drag.lastY;
+        drag.lastX = e.clientX; drag.lastY = e.clientY;
+
+        if (drag.isPan) {
+          // Pan: shift the look-at target in screen space
+          const panSens = 0.004 * zoom;
+          panTarget.x -= dx * panSens;
+          panTarget.y += dy * panSens;
+        } else {
+          const sens = 0.006;
+          rotation.yaw   += dx * sens;
+          rotation.pitch += dy * sens;
+          rotation.pitch  = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, rotation.pitch));
+          velocity.yaw   = dx * sens;
+          velocity.pitch = dy * sens;
+        }
+      });
+
+      // Context menu suppress (allow right-drag to pan)
+      sceneEl.addEventListener('contextmenu', e => e.preventDefault());
+
+      const endPointer = (e) => {
+        activePointers.delete(e.pointerId);
+        try { sceneEl.releasePointerCapture(e.pointerId); } catch (_) {}
+        if (activePointers.size < 2) pinchPrevDist = 0;
+        if (activePointers.size === 0) {
+          drag.active = false;
+          sceneEl.classList.remove('dragging', 'panning');
+        }
+      };
+      sceneEl.addEventListener('pointerup',     endPointer);
+      sceneEl.addEventListener('pointercancel', endPointer);
+      sceneEl.addEventListener('pointerleave',  endPointer);
+
+      // Scroll = zoom, Ctrl+scroll = faster zoom
+      sceneEl.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (!userHasInteracted) { userHasInteracted = true; dismissHint(); }
+        const lineMult = e.deltaMode === 1 ? 16 : 1;
+        const speed = e.ctrlKey ? 0.004 : 0.0018;
+        const factor = Math.exp(e.deltaY * lineMult * speed);
+        zoomTarget = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomTarget * factor));
+      }, { passive: false });
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        nodeMat.uniforms.uPixelRatio.value = renderer.getPixelRatio();
+      });
+
+      // ======= ANIMATE =======
+      const clock = new THREE.Clock();
+      const tmp   = new THREE.Vector3();
+
+      const CAM_START = new THREE.Vector3(0, 14, 0.6);
+      const CAM_END   = new THREE.Vector3(0, 0.2, 5.5);
+      const INTRO_DURATION = 3.0;
+      const easeInOutCubic = (x) => x < 0.5
+        ? 4 * x * x * x
+        : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+      function updateFlow(flow) {
+        for (let i = 0; i < flow.state.length; i++) {
+          const s = flow.state[i];
+          s.t += s.speed * 0.009;
+          if (s.t >= 1) {
+            s.t = 0;
+            s.edge = s.validEdges[Math.floor(Math.random() * s.validEdges.length)];
+          }
+          const a = edgeIdx[s.edge * 2];
+          const b = edgeIdx[s.edge * 2 + 1];
+          flow.pos[i*3]   = nodePositions[a*3]   + (nodePositions[b*3]   - nodePositions[a*3])   * s.t;
+          flow.pos[i*3+1] = nodePositions[a*3+1] + (nodePositions[b*3+1] - nodePositions[a*3+1]) * s.t;
+          flow.pos[i*3+2] = nodePositions[a*3+2] + (nodePositions[b*3+2] - nodePositions[a*3+2]) * s.t;
+        }
+        flow.geo.attributes.position.needsUpdate = true;
+      }
+
+      function animate() {
+        const t  = clock.getElapsedTime();
+        const dt = 0.016; // stable 60fps target dt
+        nodeMat.uniforms.uTime.value = t;
+
+        // ── Camera: intro tween → zoom-controlled orbit ──
+        if (t < INTRO_DURATION) {
+          const k = easeInOutCubic(t / INTRO_DURATION);
+          camera.position.lerpVectors(CAM_START, CAM_END, k);
+          camera.lookAt(0, 0, 0);
+        } else {
+          zoom += (zoomTarget - zoom) * 0.10;
+          updateZoomBadge(zoom);
+          pan.x += (panTarget.x - pan.x) * 0.10;
+          pan.y += (panTarget.y - pan.y) * 0.10;
+          const dir  = CAM_END.clone().normalize();
+          const dist = CAM_END.length() * zoom;
+          camera.position.copy(dir).multiplyScalar(dist);
+          // Apply pan as look-at offset in view space
+          const lookAt = new THREE.Vector3(pan.x, pan.y, 0);
+          camera.lookAt(lookAt);
+          camera.position.x += pan.x;
+          camera.position.y += pan.y;
+          drawMinimap();
+        }
+
+        // ── Brain rotation: drag → inertia → gentle idle spin ──
+        if (!drag.active) {
+          // Inertia — silky 0.92 decay makes it feel like it's floating
+          rotation.yaw   += velocity.yaw;
+          rotation.pitch += velocity.pitch;
+          rotation.pitch  = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, rotation.pitch));
+          velocity.yaw   *= 0.92;
+          velocity.pitch *= 0.92;
+          if (Math.abs(velocity.yaw)   < 0.00015) velocity.yaw   = 0;
+          if (Math.abs(velocity.pitch) < 0.00015) velocity.pitch = 0;
+
+          const velMag = Math.abs(velocity.yaw) + Math.abs(velocity.pitch);
+          if (autoSpin) {
+            if (!userHasInteracted) {
+              spinResume = 1;
+            } else {
+              spinResume += (velMag < 0.0005 ? 1 : 0 - spinResume) * 0.008;
+              spinResume  = Math.max(0, Math.min(1, spinResume));
+            }
+            rotation.yaw += 0.0008 * spinResume;
+          } else {
+            spinResume = 0;
+          }
+
+          // Playful idle breathe: tiny sinusoidal pitch sway when fully idle
+          if (spinResume > 0.8 && velMag < 0.0001) {
+            idleBreath += dt;
+            rotation.pitch += Math.sin(idleBreath * 0.25) * 0.00012;
+          }
+        } else {
+          idleBreath = 0;
+          spinResume = 0; // reset re-engage timer while dragging
+        }
+
+        brainGroup.rotation.y = rotation.yaw;
+        brainGroup.rotation.x = rotation.pitch;
+
+        ringGroup.rotation.y  = -t * 0.04;
+        ringGroup.rotation.x  = rotation.pitch * 0.5;
+
+        updateFlow(flowInfo);
+        updateFlow(flowGoods);
+        updateFlow(flowMoney);
+
+        // ── Label projection ──
+        for (let i = 0; i < clusterAnchors.length; i++) {
+          tmp.copy(clusterAnchors[i].pos);
+          tmp.applyMatrix4(brainGroup.matrixWorld);
+
+          const camDir     = new THREE.Vector3().subVectors(tmp, camera.position).normalize();
+          const worldNorm  = clusterAnchors[i].pos.clone().normalize().applyQuaternion(brainGroup.quaternion);
+          const facingDot  = camDir.dot(worldNorm);
+
+          const screen = tmp.clone().project(camera);
+          const x = (screen.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (-screen.y * 0.5 + 0.5) * window.innerHeight;
+
+          labelEls[i].style.opacity = 0;
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      // ── Show UI after intro ──
+      setTimeout(() => {
+        const tb = document.getElementById('toolbar');
+        if (tb) tb.classList.add('show');
+        const hint = document.getElementById('hint');
+        if (hint) { hint.classList.add('show'); setTimeout(() => hint.classList.remove('show'), 5000); }
+        const title = document.getElementById('title');
+        if (title) title.classList.add('show');
+      }, 3000);
+
+      // ── Zoom badge update (patched into animate) ──
+      function updateZoomBadge(z) {
+        const el = document.getElementById('zoomBadge');
+        if (el) el.textContent = Math.round(z * 100) + '%';
+      }
+
+      animate();
+    }
+</script>
+</body>
+</html>

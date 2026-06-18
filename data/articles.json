@@ -1,0 +1,758 @@
+[
+  {
+    "id": "avanti-frozen-foods-case-study",
+    "title": "How Avanti Frozen Foods Went from 63% to 74% On-Time Delivery",
+    "excerpt": "One planner. Three plants. Nine lines. Over 100 SKUs. Here's how Factory Brain's scheduling engine turned five hours of daily planning into an instant — and what the results looked like after 90 days.",
+    "deck": "3 plants. 9 lines. 100+ SKUs. One planner running it all on spreadsheets. Here's what happened when Factory Brain replaced every manual check in Avanti's planning workflow.",
+    "category": "case-study",
+    "tag": "Case Study",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "June 10, 2026",
+    "dateISO": "2026-06-10",
+    "readTime": "8 min read",
+    "status": "published",
+    "featured": true,
+    "thumbStyle": "thumb-dark",
+    "coverImage": null,
+    "industry": "Discrete Manufacturing",
+    "featuredMetrics": [
+      {
+        "val": "+11pp",
+        "label": "On-time delivery",
+        "color": "green"
+      },
+      {
+        "val": "−60%",
+        "label": "Changeover time",
+        "color": "blue"
+      },
+      {
+        "val": "5 hrs → 0",
+        "label": "Planning time",
+        "color": ""
+      },
+      {
+        "val": "3 plants",
+        "label": "9 lines, 100+ SKUs",
+        "color": "green"
+      }
+    ],
+    "metricsStrip": [
+      {
+        "before": "63%",
+        "after": "74%",
+        "afterColor": "",
+        "label": "On-Time Delivery"
+      },
+      {
+        "before": "5h",
+        "after": "Instant",
+        "afterColor": "blue",
+        "label": "Weekly Planning Time"
+      },
+      {
+        "before": "45 min",
+        "after": "18 min",
+        "afterColor": "",
+        "label": "Avg. Changeover Time"
+      }
+    ],
+    "companySnapshot": {
+      "stats": [
+        {
+          "val": "3",
+          "valColor": "",
+          "label": "Plants"
+        },
+        {
+          "val": "9",
+          "valColor": "",
+          "label": "Lines"
+        },
+        {
+          "val": "100+",
+          "valColor": "",
+          "label": "SKUs"
+        },
+        {
+          "val": "74%",
+          "valColor": "green",
+          "label": "OTD (after)"
+        }
+      ],
+      "details": [
+        {
+          "label": "Industry",
+          "value": "Frozen Food Manufacturing"
+        },
+        {
+          "label": "Volume",
+          "value": "~2,500 tonnes / month"
+        }
+      ]
+    },
+    "relatedIds": [
+      "six-scheduling-strategies",
+      "erp-schedule-wrong",
+      "godrej-jersey-sensors"
+    ],
+    "sections": [
+      {
+        "id": "s-challenge",
+        "num": "01",
+        "label": "The Challenge",
+        "headline": "One planner. Three plants. Hundreds of interdependencies.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Avanti Frozen Foods operates at scale — <strong>3 plants, 9 production lines, over 100 SKUs</strong>, multiple vendors, and approximately <strong>2,500 tonnes of processing per month</strong>. The operation demanded constant coordination across species, packaging formats, changeover sequences, and vendor delivery windows.</p><p>And it was all being held together by one planner and a spreadsheet.</p>"
+          },
+          {
+            "type": "complexity-list",
+            "items": [
+              {
+                "icon": "🏭",
+                "text": "<strong>3 plants, 9 lines</strong> — each with unique machine constraints, line speeds, and SKU compatibility requirements."
+              },
+              {
+                "icon": "📦",
+                "text": "<strong>100+ SKUs</strong> across multiple species and packaging formats, each with different changeover requirements and vendor lead times."
+              },
+              {
+                "icon": "⚠️",
+                "text": "<strong>1 in 4 orders at risk</strong> of missing their delivery window. Capacity underutilised, materials misaligned, no visibility into the real bottleneck."
+              }
+            ]
+          },
+          {
+            "type": "pull-quote",
+            "quote": "The planner isn't late because they're slow. They're late because the spreadsheet gives them no way to be on time.",
+            "source": "PatternLab implementation assessment, Avanti Frozen Foods"
+          }
+        ]
+      },
+      {
+        "id": "s-complexity",
+        "num": "02",
+        "label": "The Complexity",
+        "headline": "It's not a people problem. It's a planning problem.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>When an operation is this interconnected, the <strong>relationships between decisions matter as much as the decisions themselves</strong>. Three questions that no spreadsheet can answer in real time:</p>"
+          },
+          {
+            "type": "complexity-list",
+            "items": [
+              {
+                "icon": "?",
+                "iconBg": "#1e3a8a",
+                "text": "Which plant can run which SKU — given line compatibility, material availability, and current capacity load?"
+              },
+              {
+                "icon": "?",
+                "iconBg": "#1e3a8a",
+                "text": "Which line clears which changeover — and in what sequence to minimise downtime across the week?"
+              },
+              {
+                "icon": "?",
+                "iconBg": "#1e3a8a",
+                "text": "Which vendor sends which material — and does the delivery window align with the scheduled run?"
+              }
+            ]
+          },
+          {
+            "type": "prose",
+            "html": "<p>Answering each question manually takes time. Answering all three simultaneously, across three plants, is structurally impossible without a connected system.</p>"
+          }
+        ]
+      },
+      {
+        "id": "s-solution",
+        "num": "03",
+        "label": "The Resolution",
+        "headline": "Factory Brain: a connected scheduler built for complex operations.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>PatternLab replaced Avanti's fragmented planning process with a single connected system — <strong>every constraint encoded, every decision traceable</strong>.</p>"
+          },
+          {
+            "type": "solution-cards",
+            "items": [
+              {
+                "iconSvg": "<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#5189f3' stroke-width='2'><rect x='2' y='3' width='20' height='14' rx='2'/><line x1='8' y1='21' x2='16' y2='21'/><line x1='12' y1='17' x2='12' y2='21'/></svg>",
+                "title": "Live Capacity Planning",
+                "text": "Real capacity visibility per plant, per line, per week — pulled directly from the scheduling engine. Overloads flagged before commit."
+              },
+              {
+                "iconSvg": "<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#5189f3' stroke-width='2'><polyline points='9 11 12 14 22 4'/><path d='M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'/></svg>",
+                "title": "Automated Feasibility Checks",
+                "text": "Every incoming order validated against live machine capacity and raw material availability in seconds. No surprises at execution."
+              },
+              {
+                "iconSvg": "<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#5189f3' stroke-width='2'><path d='M3 3h18v18H3z'/><path d='M3 9h18M9 21V9'/></svg>",
+                "title": "Changeover-Aware Scheduling",
+                "text": "An interactive Gantt that respects constraints — changeover times, line compatibility, and batch sequencing — accessible to the whole team."
+              },
+              {
+                "iconSvg": "<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#5189f3' stroke-width='2'><path d='M12 20h9'/><path d='M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z'/></svg>",
+                "title": "Full Traceability",
+                "text": "Every schedule version, plan change, and strategy choice logged automatically. Full visibility into what was planned, when, and by whom."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "s-installed",
+        "num": "04",
+        "label": "What Was Installed",
+        "headline": "One system replaced every spreadsheet, manual check, and undocumented rule.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>The implementation covered the full planning workflow — from order intake to schedule release — across all three Avanti plants. No workarounds. No parallel processes.</p><p>Factory Brain gave the planning team live capacity visibility per plant, per line, per week pulled directly from the scheduling engine. Overloads were flagged before commit, not after the week fell apart. A structured planning cycle that didn't depend on one person's memory replaced the informal, tribal knowledge that had previously held the operation together.</p>"
+          }
+        ]
+      },
+      {
+        "id": "s-pillars",
+        "num": "05",
+        "label": "Adaptation",
+        "headline": "Four pillars. No manual paperwork or spreadsheets.",
+        "blocks": [
+          {
+            "type": "pillar-cards",
+            "items": [
+              {
+                "num": "Pillar 01",
+                "title": "Smart Scheduling",
+                "text": "Machines aligned to actual production hours. Idle equipment flagged automatically. Schedules built on real constraints, not assumptions."
+              },
+              {
+                "num": "Pillar 02",
+                "title": "Full Digitalization",
+                "text": "Every plant-floor planning process moved from manual oversight to continuous real-time visibility — across all three sites simultaneously."
+              },
+              {
+                "num": "Pillar 03",
+                "title": "Unified Tracking",
+                "text": "Every machine and material availability under one live view — what's running, what's available, what's at risk. No more parallel spreadsheets."
+              },
+              {
+                "num": "Pillar 04",
+                "title": "Supply Chain Traceability",
+                "text": "End-to-end visibility from raw material intake to final pack. Every batch tracked, every handoff logged, 100% digital and auditable."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "s-results",
+        "num": "06",
+        "label": "Results",
+        "headline": "",
+        "blocks": [
+          {
+            "type": "results-block",
+            "eyebrow": "Transformation Results",
+            "headline": "Nothing changed on the floor. Everything changed in the plan.",
+            "sub": "No guesswork. Only data and results.",
+            "cells": [
+              {
+                "before": "63%",
+                "after": "74%↑",
+                "afterColor": "green",
+                "label": "On-Time Delivery"
+              },
+              {
+                "before": "5 hours/week",
+                "after": "Instant",
+                "afterColor": "blue",
+                "label": "Planning Time"
+              },
+              {
+                "before": "45 min",
+                "after": "18 min",
+                "afterColor": "green",
+                "label": "Changeover Time"
+              }
+            ],
+            "takeaway": "The planner didn't change. The operation didn't change. The planning system changed — and the results followed. Factory Brain gave Avanti something spreadsheets never could: a schedule that reflects reality before the week begins."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-06-10T00:00:00.000Z",
+    "updatedAt": "2026-06-17T04:38:58.780Z"
+  },
+  {
+    "id": "six-scheduling-strategies",
+    "title": "The Six Scheduling Strategies Every Plant Manager Should Know",
+    "excerpt": "EDD, Min Changeover, Critical Ratio, Max Utilisation, SPT, Weighted Priority — when each works, when each fails, and how to switch between them mid-week.",
+    "deck": "EDD, Min Changeover, Critical Ratio, Max Utilisation, SPT, Weighted Priority — when each works, when each fails, and how to switch between them mid-week.",
+    "category": "planning",
+    "tag": "Planning",
+    "author": "PatternLab Team",
+    "authorInitials": "PT",
+    "date": "June 3, 2026",
+    "dateISO": "2026-06-03",
+    "readTime": "6 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-dark",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "erp-schedule-wrong",
+      "critical-ratio-vs-edd"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "Overview",
+        "headline": "Choosing the right scheduling strategy changes everything.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Most factories default to one scheduling strategy and stick with it — usually earliest due date (EDD) or whatever their ERP defaults to. But a single strategy applied uniformly is almost always suboptimal. The right strategy depends on your constraint, your week, and what you're optimising for.</p><p>Here are the six strategies Factory Brain supports natively, when to use each, and the failure modes to watch for.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-06-03T00:00:00.000Z",
+    "updatedAt": "2026-06-16T15:27:52.217Z"
+  },
+  {
+    "id": "erp-schedule-wrong",
+    "title": "Why Your ERP's Schedule Is Already Wrong Before the Week Starts",
+    "excerpt": "ERPs model capacity as theoretical maximums. Factory Brain uses a Knowledge Graph that reflects actual machine state, routing constraints, and live changeover data.",
+    "deck": "ERPs model capacity as theoretical maximums. Factory Brain uses a Knowledge Graph that reflects actual machine state, routing constraints, and live changeover data.",
+    "category": "strategy",
+    "tag": "Ops Strategy",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "May 28, 2026",
+    "dateISO": "2026-05-28",
+    "readTime": "5 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-blue",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "six-scheduling-strategies",
+      "knowledge-graph-factory"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Problem",
+        "headline": "Theoretical capacity vs. real capacity.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Your ERP was built to record transactions — purchase orders, work orders, invoices. It was not built to model the live, constraint-ridden reality of a factory floor. When it does attempt scheduling, it works from static master data: rated capacity, standard run times, theoretical changeover durations.</p><p>None of that is what actually happens on Monday morning.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-05-28T00:00:00.000Z",
+    "updatedAt": "2026-05-28T00:00:00.000Z"
+  },
+  {
+    "id": "versioned-releases",
+    "title": "Versioned Releases: Why Every Schedule Should Be Immutable",
+    "excerpt": "When planners overwrite last week's schedule to fix this week's problem, accountability disappears. Versioned releases lock the plan, log changes, and make drift visible.",
+    "deck": "When planners overwrite last week's schedule to fix this week's problem, accountability disappears. Versioned releases lock the plan, log changes, and make drift visible.",
+    "category": "product",
+    "tag": "Product",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "May 20, 2026",
+    "dateISO": "2026-05-20",
+    "readTime": "4 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-slate",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "erp-schedule-wrong"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Problem",
+        "headline": "Overwriting is the enemy of accountability.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>In most planning environments, the schedule is a living document — which means it gets overwritten constantly. A machine goes down on Tuesday; the planner adjusts the schedule. A priority order comes in on Wednesday; the schedule changes again. By Friday, nobody remembers what the original plan was.</p><p>Factory Brain treats every released schedule as immutable. Changes create a new version. The old version is preserved.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-05-20T00:00:00.000Z",
+    "updatedAt": "2026-05-20T00:00:00.000Z"
+  },
+  {
+    "id": "godrej-jersey-sensors",
+    "title": "60 Sensors. One Day. How Godrej Jersey Wired Their Shop Floor",
+    "excerpt": "PatternClip sensors deployed across a dairy manufacturing facility in a single working day — no IT infrastructure, no integration project, live machine data by morning.",
+    "deck": "PatternClip sensors deployed across a dairy manufacturing facility in a single working day — no IT infrastructure, no integration project, live machine data by morning.",
+    "category": "case-study",
+    "tag": "Case Study",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "May 14, 2026",
+    "dateISO": "2026-05-14",
+    "readTime": "7 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-teal",
+    "coverImage": null,
+    "industry": "Dairy Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [
+      {
+        "before": "0",
+        "after": "60",
+        "afterColor": "green",
+        "label": "Sensors Deployed"
+      },
+      {
+        "before": "Weeks",
+        "after": "1 Day",
+        "afterColor": "blue",
+        "label": "Installation Time"
+      },
+      {
+        "before": "Manual",
+        "after": "Live",
+        "afterColor": "",
+        "label": "Machine Visibility"
+      }
+    ],
+    "companySnapshot": {
+      "stats": [
+        {
+          "val": "60",
+          "valColor": "",
+          "label": "Sensors"
+        },
+        {
+          "val": "1",
+          "valColor": "green",
+          "label": "Day setup"
+        },
+        {
+          "val": "0",
+          "valColor": "",
+          "label": "IT tickets"
+        }
+      ],
+      "details": [
+        {
+          "label": "Industry",
+          "value": "Dairy Manufacturing"
+        },
+        {
+          "label": "Product",
+          "value": "PatternClip IoT sensors"
+        }
+      ]
+    },
+    "relatedIds": [
+      "avanti-frozen-foods-case-study",
+      "erp-schedule-wrong"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Challenge",
+        "headline": "No machine visibility. No baseline. No starting point.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Godrej Jersey's dairy manufacturing facility had no real-time machine data. Utilisation was estimated, downtime was logged manually (if at all), and changeover times were based on supervisor memory rather than measurement.</p><p>Before Factory Brain could optimise the schedule, it needed to know what was actually happening on the floor.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-05-14T00:00:00.000Z",
+    "updatedAt": "2026-05-14T00:00:00.000Z"
+  },
+  {
+    "id": "order-feasibility",
+    "title": "Order Feasibility Before You Commit: Stop Promising What You Can't Deliver",
+    "excerpt": "Before a sales order is accepted, Factory Brain runs a feasibility check against live machine capacity. Here's what that looks like and why it eliminates the late order tax.",
+    "deck": "Before a sales order is accepted, Factory Brain runs a feasibility check against live machine capacity. Here's what that looks like and why it eliminates the late order tax.",
+    "category": "planning",
+    "tag": "Planning",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "May 8, 2026",
+    "dateISO": "2026-05-08",
+    "readTime": "5 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-dark",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "avanti-frozen-foods-case-study",
+      "erp-schedule-wrong"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Problem",
+        "headline": "Sales promises what planning can't keep.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>In most manufacturers, sales commits to delivery dates based on standard lead times — not live factory capacity. By the time the order reaches the planning team, the date is already in the customer's system and expectations are set. If capacity can't support it, the planner has no good options.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-05-08T00:00:00.000Z",
+    "updatedAt": "2026-05-08T00:00:00.000Z"
+  },
+  {
+    "id": "knowledge-graph-factory",
+    "title": "What Is a Knowledge Graph and Why Does Your Factory Need One?",
+    "excerpt": "Relational databases store rows. Knowledge graphs store relationships. For a factory — where a machine's idle time ripples across three downstream SKUs — the difference is everything.",
+    "deck": "Relational databases store rows. Knowledge graphs store relationships. For a factory — where a machine's idle time ripples across three downstream SKUs — the difference is everything.",
+    "category": "product",
+    "tag": "Product",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "April 30, 2026",
+    "dateISO": "2026-04-30",
+    "readTime": "6 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-blue",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "erp-schedule-wrong",
+      "six-scheduling-strategies"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Concept",
+        "headline": "A factory is a graph, not a table.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>A relational database is brilliant at storing structured records — customer orders, inventory counts, machine specs. But a factory floor isn't a set of records. It's a web of interdependencies: machines that feed other machines, materials that block multiple SKUs, changeovers that cascade across shifts.</p><p>A knowledge graph models exactly this — entities and the relationships between them — enabling Factory Brain to answer questions that a row-based database simply cannot.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-04-30T00:00:00.000Z",
+    "updatedAt": "2026-06-16T14:56:42.894Z"
+  },
+  {
+    "id": "seven-fourteen-day-golive",
+    "title": "7–14 Day Go-Live: How Factory Brain Deploys Without an IT Project",
+    "excerpt": "Most manufacturing software deployments take months and consume IT bandwidth. Factory Brain is live in two weeks. Here's the exact implementation sequence.",
+    "deck": "Most manufacturing software deployments take months and consume IT bandwidth. Factory Brain is live in two weeks. Here's the exact implementation sequence.",
+    "category": "strategy",
+    "tag": "Ops Strategy",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "April 22, 2026",
+    "dateISO": "2026-04-22",
+    "readTime": "5 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-slate",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "godrej-jersey-sensors",
+      "avanti-frozen-foods-case-study"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "Why It's Fast",
+        "headline": "No ERP integration. No IT ticket. No 6-month project.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Enterprise software typically moves at enterprise speed — procurement, security review, integration work, training. Factory Brain sidesteps all of that. PatternClip sensors clip to machines without wiring. Data flows via cellular, not your IT network. The scheduling engine runs in the cloud. There's nothing to install on-premise.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-04-22T00:00:00.000Z",
+    "updatedAt": "2026-04-22T00:00:00.000Z"
+  },
+  {
+    "id": "critical-ratio-vs-edd",
+    "title": "Critical Ratio vs. EDD: Choosing the Right Strategy When Orders Compete",
+    "excerpt": "Two late orders, one machine slot. EDD gives you the nearest due date. Critical Ratio tells you which order is in deeper trouble. The distinction matters.",
+    "deck": "Two late orders, one machine slot. EDD gives you the nearest due date. Critical Ratio tells you which order is in deeper trouble. The distinction matters.",
+    "category": "planning",
+    "tag": "Planning",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "April 15, 2026",
+    "dateISO": "2026-04-15",
+    "readTime": "4 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-dark",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "six-scheduling-strategies",
+      "erp-schedule-wrong"
+    ],
+    "sections": [
+      {
+        "id": "s-intro",
+        "num": "01",
+        "label": "The Difference",
+        "headline": "EDD optimises for urgency. CR optimises for slack.",
+        "blocks": [
+          {
+            "type": "prose",
+            "html": "<p>Earliest Due Date (EDD) is the default scheduling rule in most ERPs. It's simple: work the order with the nearest due date first. The problem is that due date alone doesn't tell you how much trouble an order is in. An order due tomorrow with 4 hours of work left is fine. An order due in three days with 5 days of work remaining is a crisis.</p><p>Critical Ratio solves this by dividing time remaining by work remaining. A CR below 1.0 means the order is already behind schedule.</p>"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-04-15T00:00:00.000Z",
+    "updatedAt": "2026-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "why-production-schedules-change",
+    "title": "Test Save from Editor",
+    "excerpt": "The daily schedule isn't failing because planners are bad at planning. It's failing because the system they're planning in can't reflect reality fast enough.",
+    "deck": "The daily schedule isn't failing because planners are bad at planning. It's failing because the system they're planning in can't reflect reality fast enough.",
+    "category": "planning",
+    "tag": "Planning",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "April 8, 2026",
+    "dateISO": "2026-04-08",
+    "readTime": "5 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-dark",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "erp-schedule-wrong"
+    ],
+    "sections": [
+      {
+        "label": "Test Section",
+        "blocks": [
+          {
+            "html": "<p>Hello world</p>",
+            "type": "prose"
+          }
+        ],
+        "num": "01",
+        "id": "s-test",
+        "headline": "Headline"
+      }
+    ],
+    "createdAt": "2026-04-08T00:00:00.000Z",
+    "updatedAt": "2026-06-16T15:09:04.793Z"
+  },
+  {
+    "id": "five-risks-every-factory",
+    "title": "The Five Risks Every Factory Should Monitor Daily",
+    "excerpt": "Most factory KPIs are lagging indicators — they tell you what went wrong last week. These five signals tell you what's about to go wrong today.",
+    "deck": "Most factory KPIs are lagging indicators — they tell you what went wrong last week. These five signals tell you what's about to go wrong today.",
+    "category": "case-study",
+    "tag": "Case Study",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "April 1, 2026",
+    "dateISO": "2026-04-01",
+    "readTime": "6 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-blue",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [],
+    "sections": [],
+    "createdAt": "2026-04-01T00:00:00.000Z",
+    "updatedAt": "2026-06-16T14:56:32.773Z"
+  },
+  {
+    "id": "what-is-factory-brain",
+    "title": "What Is a Factory Brain?",
+    "excerpt": "A Factory Brain isn't a dashboard. It isn't an ERP. It's the intelligence layer that sits between your machines and your decisions — and makes those decisions faster, more consistent, and more accurate.",
+    "deck": "A Factory Brain isn't a dashboard. It isn't an ERP. It's the intelligence layer that sits between your machines and your decisions — and makes those decisions faster, more consistent, and more accurate.",
+    "category": "product",
+    "tag": "Product",
+    "author": "PatternLab Team",
+    "authorInitials": "PL",
+    "date": "March 25, 2026",
+    "dateISO": "2026-03-25",
+    "readTime": "7 min read",
+    "status": "published",
+    "featured": false,
+    "thumbStyle": "thumb-slate",
+    "coverImage": null,
+    "industry": "Manufacturing",
+    "featuredMetrics": [],
+    "metricsStrip": [],
+    "companySnapshot": null,
+    "relatedIds": [
+      "knowledge-graph-factory"
+    ],
+    "sections": [],
+    "createdAt": "2026-03-25T00:00:00.000Z",
+    "updatedAt": "2026-06-16T14:56:35.941Z"
+  }
+]
