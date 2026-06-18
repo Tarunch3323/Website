@@ -96,9 +96,10 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   margin: 0;
+  overflow-x: hidden;
   background: var(--bg-page);
   color: var(--text-primary);
   font-family: var(--font-body);
@@ -630,7 +631,7 @@ body {
     min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow: visible !important;
+    overflow: hidden !important;
   }
   .fb-spec-iframe {
     position: relative !important;
