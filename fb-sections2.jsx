@@ -107,7 +107,7 @@ function Pricing() {
 function FinalCTA({ onTry }) {
   return (
     <section id="book" className="fb-section" style={{ background: 'var(--navy)', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-      <div aria-hidden="true" style={{ position: 'absolute', top: '-40%', left: '50%', transform: 'translateX(-50%)', width: 900, height: 600, background: 'radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 36%, transparent), transparent 64%)', opacity: .5 }} />
+      <div aria-hidden="true" style={{ position: 'absolute', top: '-40%', left: '-20%', right: '-20%', height: 600, background: 'radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 36%, transparent), transparent 64%)', opacity: .5 }} />
       <div className="fb-wrap" style={{ position: 'relative', textAlign: 'center', maxWidth: 760 }}>
         <h2 className="fb-h2 fb-reveal" style={{ color: '#fff' }}>Stop guessing. Start committing.</h2>
         <p className="fb-reveal" style={{ fontSize: 'clamp(16px,1.4vw,19px)', color: 'rgba(255,255,255,.7)', marginTop: 16, textWrap: 'pretty' }}>
