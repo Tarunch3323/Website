@@ -770,6 +770,9 @@ body {
   .fb-timeline-step-num { display: none !important; }
 }
 
+/* ── FinalCTA — base button width ── */
+.fb-cta-btn { width: clamp(200px, 60vw, 320px); justify-content: center !important; }
+
 /* ── FinalCTA — mobile fixes ── */
 @media (max-width: 640px) {
   #book [aria-hidden="true"] {
@@ -781,14 +784,9 @@ body {
     overflow-wrap: break-word !important;
     word-break: break-word !important;
   }
-  .fb-cta-btns {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-  .fb-cta-btns .fb-btn {
+  .fb-cta-btn {
     width: 100% !important;
-    justify-content: center !important;
+    max-width: calc(100vw - 48px) !important;
     --h: 48px !important;
-    font-size: 15px !important;
   }
 }
