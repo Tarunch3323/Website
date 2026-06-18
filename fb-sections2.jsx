@@ -113,7 +113,7 @@ function FinalCTA({ onTry }) {
         <p className="fb-reveal" style={{ fontSize: 'clamp(16px,1.4vw,19px)', color: 'rgba(255,255,255,.7)', marginTop: 16, textWrap: 'pretty' }}>
           Give us a week. We’ll model one line, hand you a feasible plan, and show you the capital sitting inside your schedule.
         </p>
-        <div className="fb-reveal" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 28 }}>
+        <div className="fb-reveal fb-cta-btns" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 28 }}>
           <a className="fb-btn fb-btn--primary fb-btn--lg fb-btn--onnavy" href="https://rfq.patternlab.ai/login" target="_blank" rel="noopener noreferrer"><FBIcon name="spark" size={18} /> Try now for free</a>
           <a className="fb-btn fb-btn--secondary fb-btn--lg fb-btn--onnavy" href="/contact">Book a demo <FBIcon name="arrowRight" size={16} /></a>
         </div>
