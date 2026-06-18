@@ -624,6 +624,11 @@ body {
   .fb-hide-sm  { display: none !important; }
 }
 
+/* ── Spec → Brain pipeline — hide entirely on mobile ── */
+@media (max-width: 700px) {
+  .fb-spec-pipeline-wrap { display: none !important; }
+}
+
 /* ── Spec → Brain pipeline section (brain iframe + overlay cards) ── */
 @media (max-width: 700px) {
   .fb-spec-section {

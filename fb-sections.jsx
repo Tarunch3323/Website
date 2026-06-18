@@ -2037,7 +2037,7 @@ function SpecToJobPipeline() {
   };
 
   return (
-    <>
+    <div className="fb-spec-pipeline-wrap">
       {/* ── Heading (light bg above the dark brain section) */}
       <div style={{ padding: 'clamp(56px,8vw,96px) 0 clamp(32px,4vw,52px)', textAlign: 'center', background: 'var(--bg-page)' }}>
         <div className="fb-wrap">
@@ -2171,7 +2171,7 @@ function SpecToJobPipeline() {
         </div>
 
       </section>
-    </>
+    </div>
   );
 }
 
